@@ -1,4 +1,5 @@
 from __future__ import print_function, division
+from collections import namedtuple
 import numpy as np
 import scipy as sp
 from mpmath import mp
@@ -12,123 +13,24 @@ mp.dps = 80
 print(mp)
 
 
-class Wrapper(object):
-    
-    def __init__(self, value=None):
-        # slow for clarity - improve later
-        if value is not None:
-            self._value = value
-        else:
-            self._value = np.zeros(shape=(3,4))
-    
-    @property
-    def x_i(self):
-        return self._value[0]
-        
-    @x_i.setter
-    def x_i(self, v):
-        self._value[0] = v
-    
-    @property
-    def y_i(self):
-        return self._value[1]
-        
-    @y_i.setter
-    def y_i(self, v):
-        self._value[1] = v
-    
-    @property
-    def z_i(self):
-        return self._value[2]
-    
-    @z_i.setter
-    def z_i(self, v):
-        self._value[2] = v
-    
-    #
-    
-    @property
-    def p_ix(self):
-        return self._value[3]
-        
-    @p_ix.setter
-    def p_ix(self, v):
-        self._value[3] = v
-    
-    @property
-    def p_iy(self):
-        return self._value[4]
-        
-    @p_iy.setter
-    def p_iy(self, v):
-        self._value[4] = v
-    
-    @property
-    def p_iz(self):
-        return self._value[5]
-        
-    @p_iz.setter
-    def p_iz(self, v):
-        self._value[5] = v
-    
-    #
-    
-    @property
-    def x_e(self):
-        return self._value[6]
-        
-    @x_e.setter
-    def x_e(self, v):
-        self._value[6] = v
-    
-    @property
-    def y_e(self):
-        return self._value[7]
-        
-    @y_e.setter
-    def y_e(self, v):
-        self._value[7] = v
-    
-    @property
-    def z_e(self):
-        return self._value[8]
-    
-    @z_e.setter
-    def z_e(self, v):
-        self._value[8] = v
-    
-    #
-    
-    @property
-    def p_ex(self):
-        return self._value[9]
-        
-    @p_ex.setter
-    def p_ex(self, v):
-        self._value[9] = v
-    
-    @property
-    def p_ey(self):
-        return self._value[10]
-        
-    @p_ey.setter
-    def p_ey(self, v):
-        self._value[10] = v
-    
-    @property
-    def p_ez(self):
-        return self._value[11]
-        
-    @p_ez.setter
-    def p_ez(self, v):
-        self._value[11] = v
+Index = namedtuple('Index',[
+    'x_i',
+    'y_i',
+    'z_i',
+    'p_ix',
+    'p_iy',
+    'p_iz',
+    'x_e',
+    'y_e',
+    'z_e',
+    'p_ex',
+    'p_ey',
+    'p_ez',
+])
 
+idx = Index(*range(12))
 
-def M0_dt(w, dt, ez=None):
-    
-    if ez is not None:
-        w = None
-        w = ez 
+def M0_dt(w, dt):
     
     # ion mass = proton mass
     m_i = const.m_p
@@ -138,8 +40,8 @@ def M0_dt(w, dt, ez=None):
     # gryrotron frequency
     omega_e = np.abs(const.e * magnetic_field) / const.m_e
     
-    V_ex = w.p_ex / const.m_e + omega_e * w.y_e
-    V_ey = w.p_ey / const.m_e
+    V_ex = w[idx.p_ex] / const.m_e + omega_e * w[idx.y_e]
+    V_ey = w[idx.p_ey] / const.m_e
     
     # phase angle
     phi_0 = np.arctan(V_ex / V_ey)
@@ -149,53 +51,45 @@ def M0_dt(w, dt, ez=None):
     
     p_gc = gc_velocity / omega_e
     
-    xbar_e = w.x_e + p_gc * (np.cos(phi_0 + omega_e * dt) - np.cos(phi_0))
-    ybar_e = w.y_e - p_gc * (np.sin(phi_0 + omega_e * dt) - np.sin(phi_0))
-    zbar_e = w.z_e + (w.p_ez / const.m_e) * dt
+    w[idx.x_e] = w[idx.x_e] + p_gc * (np.cos(phi_0 + omega_e * dt) - np.cos(phi_0))
+    w[idx.y_e] = w[idx.y_e] - p_gc * (np.sin(phi_0 + omega_e * dt) - np.sin(phi_0))
+    w[idx.z_e] = w[idx.z_e] + (w[idx.p_ez] / const.m_e) * dt
     
-    xbar_i = w.x_i + (w.p_ix / m_i) * dt
-    ybar_i = w.y_i + (w.p_iy / m_i) * dt
-    zbar_i = w.z_i + (w.p_iz / m_i) * dt
+    w[idx.x_i] = w[idx.x_i] + (w[idx.p_ix] / m_i) * dt
+    w[idx.y_i] = w[idx.y_i] + (w[idx.p_iy] / m_i) * dt
+    w[idx.z_i] = w[idx.z_i] + (w[idx.p_iz] / m_i) * dt
     
-    return mp.matrix(
-        ((xbar_e, ybar_e, zbar_e),
-        (xbar_i, ybar_i, zbar_i))
-    )
+    return w
+        
 
 
 def Mc_dt(w, dt):
     N = 1 # user input
     # ion charge 
     Q_i = const.elementary_charge * N
-    b = np.sqrt((w.x_i - w.x_e)**2 + (w.y_i - w.y_e)**2 + (w.z_i - w.z_e)**2)
-    print('b:', b)
-    
+    b = np.sqrt((w[idx.x_i] - w[idx.x_e])**2 + (w[idx.y_i] - w[idx.y_e])**2 + (w[idx.z_i] - w[idx.z_e])**2)
     alpha = ((const.e * Q_i) / (4. * const.pi * const.epsilon_0)) * dt
-    print('a:', alpha)
     
-    pbar_ix = mp.mpf(w.p_ix) - mp.mpf((alpha * (w.x_i - w.x_e) / b**3))
-    pbar_iy = mp.mpf(w.p_iy) - mp.mpf((alpha * (w.y_i - w.y_e) / b**3))
-    pbar_iz = mp.mpf(w.p_iz) - mp.mpf((alpha * (w.z_i - w.z_e) / b**3))
+    w[idx.p_ix] = mp.mpf(w[idx.p_ix]) - mp.mpf((alpha * (w[idx.x_i] - w[idx.x_e]) / b**3))
+    w[idx.p_iy] = mp.mpf(w[idx.p_iy]) - mp.mpf((alpha * (w[idx.y_i] - w[idx.y_e]) / b**3))
+    w[idx.p_iz] = mp.mpf(w[idx.p_iz]) - mp.mpf((alpha * (w[idx.z_i] - w[idx.z_e]) / b**3))
     
-    pbar_ex = -(pbar_ix - w.p_ix) + w.p_ex
-    pbar_ey = -(pbar_iy - w.p_iy) + w.p_ey
-    pbar_ez = -(pbar_iz - w.p_iz) + w.p_ez
+    w[idx.p_ex] = -(w[idx.p_ix] - w[idx.p_ix]) + w[idx.p_ex]
+    w[idx.p_ey] = -(w[idx.p_iy] - w[idx.p_iy]) + w[idx.p_ey]
+    w[idx.p_ez] = -(w[idx.p_iz] - w[idx.p_iz]) + w[idx.p_ez]
     
-    return mp.matrix(
-        ((pbar_ix, pbar_iy, pbar_iz),
-        (pbar_ex, pbar_ey, pbar_ez))
-    )
+    return w
 
 
 def initialize(w):
     delt = const.value('classical electron radius')
-    w.x_i = w.x_i + mp.mpf('3.23e3') * delt
-    w.y_i = w.y_i - mp.mpf('1.67e3') * delt
-    w.z_i = w.z_i + mp.mpf('2.52e3') * delt
+    w[idx.x_i] = w[idx.x_i] + mp.mpf('3.23e3') * delt
+    w[idx.y_i] = w[idx.y_i] - mp.mpf('1.67e3') * delt
+    w[idx.z_i] = w[idx.z_i] + mp.mpf('2.52e3') * delt
 
 
 def ts_vec(dt, t_max):
-    t = np.float(0)
+    t = 0.
     while t <= t_max:
         yield t
         t = t + dt
@@ -214,14 +108,15 @@ if __name__ == '__main__':
     #
     t_max = 0.000001
     #
-    for N in [1,2,4,8][:1]:
-        v = np.ones(shape=(12), dtype=np.float_)
-        w = Wrapper(v)
+    for N in [1,2,4,8][1:2]:
+        w = np.ones(shape=(12), dtype=np.float_)
         initialize(w)
-        print(mp.matrix(w._value))
+        print(mp.matrix(w))
         dt = 1./N * dt_max
         print(step(w, dt))
         ts = [_t for _t in ts_vec(dt, t_max)]
-        #odeint(M0_dt, w._value, ts)
-
+        r1 = odeint(M0_dt, w, ts)
+        print(r1)
+        r2 = odeint(Mc_dt, w, ts)
+        print(r2)
 
