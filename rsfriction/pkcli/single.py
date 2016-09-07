@@ -23,108 +23,112 @@ class Wrapper(object):
     
     @property
     def x_i(self):
-        return self._value[0][0]
+        return self._value[0]
         
     @x_i.setter
     def x_i(self, v):
-        self._value[0][0] = v
+        self._value[0] = v
     
     @property
     def y_i(self):
-        return self._value[0][1]
+        return self._value[1]
         
     @y_i.setter
     def y_i(self, v):
-        self._value[0][1] = v
+        self._value[1] = v
     
     @property
     def z_i(self):
-        return self._value[0][2]
+        return self._value[2]
     
     @z_i.setter
     def z_i(self, v):
-        self._value[0][2] = v
+        self._value[2] = v
     
     #
     
     @property
     def p_ix(self):
-        return self._value[1][0]
+        return self._value[3]
         
     @p_ix.setter
     def p_ix(self, v):
-        self._value[1][0] = v
+        self._value[3] = v
     
     @property
     def p_iy(self):
-        return self._value[1][1]
+        return self._value[4]
         
     @p_iy.setter
     def p_iy(self, v):
-        self._value[1][1] = v
+        self._value[4] = v
     
     @property
     def p_iz(self):
-        return self._value[1][2]
+        return self._value[5]
         
     @p_iz.setter
     def p_iz(self, v):
-        self._value[1][2] = v
+        self._value[5] = v
     
     #
     
     @property
     def x_e(self):
-        return self._value[2][0]
+        return self._value[6]
         
     @x_e.setter
     def x_e(self, v):
-        self._value[2][0] = v
+        self._value[6] = v
     
     @property
     def y_e(self):
-        return self._value[2][1]
+        return self._value[7]
         
     @y_e.setter
     def y_e(self, v):
-        self._value[2][1] = v
+        self._value[7] = v
     
     @property
     def z_e(self):
-        return self._value[2][2]
+        return self._value[8]
     
     @z_e.setter
     def z_e(self, v):
-        self._value[2][2] = v
+        self._value[8] = v
     
     #
     
     @property
     def p_ex(self):
-        return self._value[3][0]
+        return self._value[9]
         
     @p_ex.setter
     def p_ex(self, v):
-        self._value[3][0] = v
+        self._value[9] = v
     
     @property
     def p_ey(self):
-        return self._value[3][1]
+        return self._value[10]
         
     @p_ey.setter
     def p_ey(self, v):
-        self._value[3][1] = v
+        self._value[10] = v
     
     @property
     def p_ez(self):
-        return self._value[3][2]
+        return self._value[11]
         
     @p_ez.setter
     def p_ez(self, v):
-        self._value[3][2] = v
+        self._value[11] = v
 
 
-def M0_dt(w, dt):
+def M0_dt(w, dt, ez=None):
+    
+    if ez is not None:
+        w = None
+        w = ez 
     
     # ion mass = proton mass
     m_i = const.m_p
@@ -190,6 +194,14 @@ def initialize(w):
     w.z_i = w.z_i + mp.mpf('2.52e3') * delt
 
 
+def ts_vec(dt, t_max):
+    t = np.float(0)
+    while t <= t_max:
+        yield t
+        t = t + dt
+    yield t
+
+
 def step(w,dt):
     return (M0_dt(w, dt/2), Mc_dt(w, dt))
 
@@ -200,10 +212,16 @@ if __name__ == '__main__':
     omega_e = np.abs(const.e * magnetic_field) / const.m_e
     dt_max = 1/8 * 2*const.pi / omega_e
     #
+    t_max = 0.000001
+    #
     for N in [1,2,4,8][:1]:
-        v = np.ones(shape=(4,3), dtype=np.float_)
-        w = Wrapper(v)    
+        v = np.ones(shape=(12), dtype=np.float_)
+        w = Wrapper(v)
         initialize(w)
+        print(mp.matrix(w._value))
         dt = 1./N * dt_max
         print(step(w, dt))
+        ts = [_t for _t in ts_vec(dt, t_max)]
+        #odeint(M0_dt, w._value, ts)
+
 
