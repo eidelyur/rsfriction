@@ -183,7 +183,7 @@ def Mc_dt(w, dt):
     )
 
 
-def init(w):
+def initialize(w):
     delt = const.value('classical electron radius')
     w.x_i = w.x_i + mp.mpf('3.23e3') * delt
     w.y_i = w.y_i - mp.mpf('1.67e3') * delt
@@ -199,11 +199,11 @@ if __name__ == '__main__':
     # Gyrotron Frequency
     omega_e = np.abs(const.e * magnetic_field) / const.m_e
     dt_max = 1/8 * 2*const.pi / omega_e
-    # 
-    for N in [1,2,4,8]:
+    #
+    for N in [1,2,4,8][:1]:
         v = np.ones(shape=(4,3), dtype=np.float_)
         w = Wrapper(v)    
-        init(w)
+        initialize(w)
         dt = 1./N * dt_max
         print(step(w, dt))
 
