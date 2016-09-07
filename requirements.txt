@@ -1,1 +1,6 @@
-pykern
+# pykern
+mpmath==0.19
+numpy==1.11.1
+scipy==0.18.0
+gmpy==1.17
+gmpy2==2.0.8
