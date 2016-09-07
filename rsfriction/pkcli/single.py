@@ -166,7 +166,7 @@ def Mc_dt(w, dt):
     b = np.sqrt((w.x_i - w.x_e)**2 + (w.y_i - w.y_e)**2 + (w.z_i - w.z_e)**2)
     print('b:', b)
     
-    alpha = ((const.e * Q_i) / (4 * const.pi * const.epsilon_0)) * dt
+    alpha = ((const.e * Q_i) / (4. * const.pi * const.epsilon_0)) * dt
     print('a:', alpha)
     
     pbar_ix = mp.mpf(w.p_ix) - mp.mpf((alpha * (w.x_i - w.x_e) / b**3))
@@ -183,34 +183,27 @@ def Mc_dt(w, dt):
     )
 
 
-def ts_vec(N,t_max):
-    t = 0
+def init(w):
+    delt = const.value('classical electron radius')
+    w.x_i = w.x_i + mp.mpf('3.23e3') * delt
+    w.y_i = w.y_i - mp.mpf('1.67e3') * delt
+    w.z_i = w.z_i + mp.mpf('2.52e3') * delt
+
+
+def step(w,dt):
+    return (M0_dt(w, dt/2), Mc_dt(w, dt))
+
+
+if __name__ == '__main__':
     magnetic_field = 1. # Tesla, will be user defined
     # Gyrotron Frequency
     omega_e = np.abs(const.e * magnetic_field) / const.m_e
     dt_max = 1/8 * 2*const.pi / omega_e
-    while t < t_max:
-        t = t + 1/N * dt_max
-        yield t
-
-
-if __name__ == '__main__':
-    N = [1,2,4,8]
-    ts = np.array([i for i in ts_vec(1, 0.00001)])
-    
-    v = np.ones(shape=(4,3), dtype=np.float_)
-    w = Wrapper(v)
-    delt = const.value('classical electron radius')
-    
-    w.x_i = w.x_i + mp.mpf('3.23e3') * delt
-    w.y_i = w.y_i - mp.mpf('1.67e3') * delt
-    w.z_i = w.z_i + mp.mpf('2.52e3') * delt
-    
-    A = M0_dt(w, ts[0]/2)
-    B = Mc_dt(w, ts[0])
-    C = M0_dt(w, ts[0]/2)
-    
-    print(A)
-    print(B)
-    print(C)
+    # 
+    for N in [1,2,4,8]:
+        v = np.ones(shape=(4,3), dtype=np.float_)
+        w = Wrapper(v)    
+        init(w)
+        dt = 1./N * dt_max
+        print(step(w, dt))
 
