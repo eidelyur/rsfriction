@@ -7,6 +7,7 @@ from scipy import constants as const
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
+
 # set decimal precision
 # binary prec ~ 3.33*dps
 mp.dps = 80
@@ -29,6 +30,7 @@ Index = namedtuple('Index',[
 ])
 
 idx = Index(*range(12))
+
 
 def M0_dt(w, dt):
     
@@ -58,15 +60,12 @@ def M0_dt(w, dt):
     w[idx.x_i] = w[idx.x_i] + (w[idx.p_ix] / m_i) * dt
     w[idx.y_i] = w[idx.y_i] + (w[idx.p_iy] / m_i) * dt
     w[idx.z_i] = w[idx.z_i] + (w[idx.p_iz] / m_i) * dt
-    
-    return w
-        
 
 
 def Mc_dt(w, dt):
     N = 1 # user input
     # ion charge 
-    Q_i = const.elementary_charge * N
+    Q_i = const.e * N
     b = np.sqrt((w[idx.x_i] - w[idx.x_e])**2 + (w[idx.y_i] - w[idx.y_e])**2 + (w[idx.z_i] - w[idx.z_e])**2)
     alpha = ((const.e * Q_i) / (4. * const.pi * const.epsilon_0)) * dt
     
@@ -77,15 +76,16 @@ def Mc_dt(w, dt):
     w[idx.p_ex] = -(w[idx.p_ix] - w[idx.p_ix]) + w[idx.p_ex]
     w[idx.p_ey] = -(w[idx.p_iy] - w[idx.p_iy]) + w[idx.p_ey]
     w[idx.p_ez] = -(w[idx.p_iz] - w[idx.p_iz]) + w[idx.p_ez]
-    
-    return w
 
 
 def initialize(w):
-    delt = const.value('classical electron radius')
-    w[idx.x_i] = w[idx.x_i] + mp.mpf('3.23e3') * delt
-    w[idx.y_i] = w[idx.y_i] - mp.mpf('1.67e3') * delt
-    w[idx.z_i] = w[idx.z_i] + mp.mpf('2.52e3') * delt
+    w[idx.x_i] = 0
+    w[idx.y_i] = 0
+    w[idx.z_i] = 0
+    w[idx.p_ix] = 0
+    w[idx.p_iy] = 0
+    w[idx.p_iz] = 0
+    w[idx.p_ey] = 0
 
 
 def ts_vec(dt, t_max):
@@ -96,27 +96,32 @@ def ts_vec(dt, t_max):
     yield t
 
 
-def step(w,dt):
-    return (M0_dt(w, dt/2), Mc_dt(w, dt))
-
-
 if __name__ == '__main__':
     magnetic_field = 1. # Tesla, will be user defined
     # Gyrotron Frequency
     omega_e = np.abs(const.e * magnetic_field) / const.m_e
+    t_max = 40 * 2*const.pi / omega_e
     dt_max = 1/8 * 2*const.pi / omega_e
-    #
-    t_max = 0.000001
-    #
-    for N in [1,2,4,8][1:2]:
+    for N in [2]: # [1,2,4,8]
         w = np.ones(shape=(12), dtype=np.float_)
         initialize(w)
-        print(mp.matrix(w))
         dt = 1./N * dt_max
-        print(step(w, dt))
-        ts = [_t for _t in ts_vec(dt, t_max)]
-        r1 = odeint(M0_dt, w, ts)
-        print(r1)
-        r2 = odeint(Mc_dt, w, ts)
-        print(r2)
+        print('dt:',dt)
+        t = 0.
+        x_ = []
+        y_ = []
+        while t <= t_max:
+            print(t) 
+            M0_dt(w, dt/2)
+            Mc_dt(w, dt)
+            M0_dt(w, dt/2)
+            print(w)
+            t += dt
+            x_.append(w[idx.x_e])
+            y_.append(w[idx.y_e])
+            print('---')
+    plt.figure()
+    plt.plot(x_, y_)
+    plt.show()
+
 
