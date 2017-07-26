@@ -1,0 +1,4 @@
+What was done during 07/26/2017:
+
+1) Document mcool2code.docx was finished.
+2) frictionForce_LieOperatorsApproach.py code writing and debugging continued.

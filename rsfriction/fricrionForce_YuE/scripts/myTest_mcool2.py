@@ -716,6 +716,18 @@ print "Zelec: ",Zelec
 
 """
 Zelec dimensions= (6, 7)
+QVelec:  [[  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+    0.00000000e+00   0.00000000e+00]
+ [  8.79410044e+03   1.89463151e+04   4.08185984e+04   8.79410044e+04   1.89463151e+05
+    4.08185984e+05   8.79410044e+05]
+ [  9.50000000e-07   2.04671296e-06   4.40950939e-06   9.50000000e-06   2.04671296e-05
+    4.40950939e-05   9.50000000e-05]
+ [  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+    0.00000000e+00   0.00000000e+00]
+ [ -5.00000000e-06  -1.07721735e-05  -2.32079442e-05  -5.00000000e-05  -1.07721735e-04
+   -2.32079442e-04  -5.00000000e-04]
+ [  2.79924911e+03   6.03079939e+03   1.29929634e+04   2.79924911e+04   6.03079939e+04
+    1.29929634e+05   2.79924911e+05]]
 Zelec:  [[  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
     0.00000000e+00   0.00000000e+00]
  [  1.60217657e-25   3.45178477e-25   7.43664485e-25   1.60217656e-24   3.45178477e-24
@@ -728,15 +740,15 @@ Zelec:  [[  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   
    -2.32079442e-04  -5.00000000e-04]
  [  2.54994320e-27   5.49368609e-27   1.18357879e-26   2.54994320e-26   5.49368609e-26
     1.18357879e-25   2.54994320e-25]]
+    1.18357879e-25   2.54994320e-25]]
+
 """
 
 num_elec0 = Zelec.shape[1]
 num_ion0 = Zion.shape[1]
-print "num_elec0,num_ion0=",num_elec0,num_ion0
+print "num_elec0 = %d ,num_ion0=%d" % (num_elec0,num_ion0)
 
-"""
-num_elec0,num_ion0= 7 1
-"""
+# num_elec0,num_ion0= 7 1
 
 """
 === create arrays of electrons and ions ===
@@ -745,18 +757,46 @@ electron, and compute the \Delta{p} for each interaction.
 """
 ZI_elec = np.hstack([Zelec for e in range(num_ion0)])
 ZI_ion = Zion[:, np.arange(num_ion0 * num_elec0) // num_elec0]
-print "Dimensions ZI_elec,ZI_ion =",ZI_elec.shape,ZI_ion.shape
+print "Dimensions: ZI_elec=, ZI_ion =", (ZI_elec.shape,ZI_ion.shape)
+print "ZI_elec: ",ZI_elec
+print "ZI_ion: ",ZI_ion
+
+# Dimensions ZI_elec,ZI_ion = (6, 7) (6, 7)
+"""
+ZI_elec:  [[  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+    0.00000000e+00   0.00000000e+00]
+ [  1.60217657e-25   3.45178477e-25   7.43664485e-25   1.60217656e-24   3.45178477e-24
+    7.43664485e-24   1.60217656e-23]
+ [  9.50000000e-07   2.04671296e-06   4.40950939e-06   9.50000000e-06   2.04671296e-05
+    4.40950939e-05   9.50000000e-05]
+ [  0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+    0.00000000e+00   0.00000000e+00]
+ [ -5.00000000e-06  -1.07721735e-05  -2.32079442e-05  -5.00000000e-05  -1.07721735e-04
+   -2.32079442e-04  -5.00000000e-04]
+ [  2.54994320e-27   5.49368609e-27   1.18357879e-26   2.54994320e-26   5.49368609e-26
+    1.18357879e-25   2.54994320e-25]]
+ZI_ion:  [[ 0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.]]
+"""
 
 num_elec = ZI_elec.shape[1]
 num_ion = ZI_ion.shape[1]
-print "num_elec,num_ion =",num_elec,num_ion
+print "num_elec=%d, num_ion =%d",(num_elec,num_ion)
+
+# num_elec,num_ion = 7 7
 
 """
 In [30]:
 """
 
 ZF_i, ZF_e = apply_MapZ(delta_Te, num_steps, ZI_ion, ZI_elec)
-print "Dimensions ZF_i,ZF_e=",ZF_i.shape,ZF_e.shape
+print "Dimensions ZF_i=, ZF_e=", (ZF_i.shape,ZF_e.shape)
+
+# Dimensions ZF_i,ZF_e= (4001, 6, 7) (4001, 6, 7)
 
 """
 In [31]:
@@ -765,7 +805,9 @@ In [31]:
 navg = 1 # number of gyrotron oscillations over which to average; set to 1, 2, 4, 5, or 10
 ZI_elec_gc = toGuidingCenter(ZI_elec)
 ZFgc_i, ZFgc_e = apply_MapZgc(navg * 40*delta_Te, num_steps//40 // navg, ZI_ion, ZI_elec_gc)
-print "Dimensions ZFgc_i,ZFgc_e=",ZFgc_i.shape,ZFgc_e.shape
+print "Dimensions ZFgc_i,ZFgc_e=", (ZFgc_i.shape,ZFgc_e.shape)
+
+# Dimensions ZFgc_i,ZFgc_e= (101, 6, 7) (101, 6, 7)
 
 """
 In [32]:
