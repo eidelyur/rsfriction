@@ -1,4 +1,12 @@
 What was done during 07/26/2017:
 
 1) Document mcool2code.docx was finished.
-2) frictionForce_LieOperatorsApproach.py code writing and debugging continued.
+2) frictionForce_LieOperatorsApproach.py code (fFLOA) writing and debugging continued.
+
+What was done during 07/27/2017:
+
+1) The study of the criteria for eletron magnetization for code fFLOA:
+      For each electrons during interaction more than 100 Larmour turns! OK!
+2) Code fFLOA writing and debugging continued:
+      a) Some problems with Python (creating matrix insude function);
+      b) Something wrong with electron trajectory
