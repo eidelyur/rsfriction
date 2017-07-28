@@ -8,5 +8,12 @@ What was done during 07/27/2017:
 1) The study of the criteria for eletron magnetization for code fFLOA:
       For each electrons during interaction more than 100 Larmour turns! OK!
 2) Code fFLOA writing and debugging continued:
-      a) Some problems with Python (creating matrix insude function);
+      a) Some problems with Python (creating matrix inside function);
       b) Something wrong with electron trajectory
+
+What was done during 07/28/2017:
+
+1) The study some new issues of Python.
+2) Code fFLOA writing and debugging continued:
+      a) Ok with trajectories;
+      b) Prepering of the next step - friction force calculation.
