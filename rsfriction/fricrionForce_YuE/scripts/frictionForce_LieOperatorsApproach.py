@@ -194,7 +194,7 @@ plt.grid(True)
 #
 # Initial gaussian distribution of the relative longitudinal electron's velocities 
 #
-relShiftV_e=shiftV_e/rmsV_eLong                                                 # dimensionless
+relShiftV_e=shiftV_e/rmsV_eLong                                         # dimensionless
 z_elec[Ipz,:]=np.random.normal(loc=relShiftV_e,scale=1.,size=numb_e)    # vz_e/rmsV_eLong
 
 # Verifying of distribution:
@@ -251,9 +251,11 @@ plt.figure(70)
 intrcnL_hist=plt.hist(1.e+4*L_intrcn,bins=30)
 plt.xlabel('$L_{interection}$, $\mu$m',color='m',fontsize=16)
 plt.ylabel('Particles',color='m',fontsize=16)
-plt.ylim([0,1.025*np.max(intrcnL_hist[0])])
-plt.title(('Length of Interactions $L_{interaction}$ (%d Particles): <> = %6.3f $\mu$m' % \
-           (numb_e,avr_Lintrcn)),color='m',fontsize=16)
+plt.ylim([0,1.1*np.max(intrcnL_hist[0])])
+plt.title(('Interactions Length, $L_{interaction}$ (%d Particles): tan$_{interaction}$ = %5.3f' % \
+           (numb_e,tangAlpha)), color='m',fontsize=16)
+plt.text(avr_Lintrcn,1.025*np.max(intrcnL_hist[0]),('$<L_{interaction}>$ = %6.3f $\mu$m' % \
+                     avr_Lintrcn), color='m',fontsize=16,ha='center')	  
 plt.grid(True)
 
 #
@@ -272,7 +274,7 @@ for ne in range(numb_e):
       trnsNmbrSpec[neSlctd]=trnsNmbr[ne]
       indxTrns[neSlctd]=ne
    else:
-      neSkppd=+11
+      neSkppd +=1
       indxSkppd[neSkppd]=ne
 
 maxTrnsSpec=np.max(trnsNmbrSpec[1:neSlctd])
@@ -296,13 +298,6 @@ plt.text(0,1.025*np.max(trns_hist[0]), \
 plt.grid(True)
 
 # print 'sum(trns_hist): ',np.sum(trns_hist[0])
-
-#
-# Returning to momenta:
-#
-z_elec[Ipx,:]=m_elec*rmsV_eTran*z_elec[Ipx,:]                       # g*cm/sec
-z_elec[Ipy,:]=m_elec*rmsV_eTran*z_elec[Ipy,:]                       # g*cm/sec
-z_elec[Ipz,:]=m_elec*rmsV_eLong*(z_elec[Ipz,:]-relShiftV_e)         # g*cm/sec
 
 #
 # Convertion from electron's "coordinates" to guiding-center coordinates:
@@ -382,12 +377,12 @@ def solenoid_eMatrix(B_mag,deltaT):
 def draggCollision(deltaT,z_i,z_e):
     g=deltaT*Z_ion*q_elec**2                              # g*cm^3/sec
     dz=z_i-z_e
-    denom=(dz[Ix]**2+dz[Iy]**2+dz[Iz]**2)**(3/2)    # cm^3
+    denom=(dz[Ix]**2+dz[Iy]**2+dz[Iz]**2)**(3/2)          # cm^3
     zf_i=z_i.copy()
     zf_e=z_e.copy()
     for ip in (Ipx,Ipy,Ipz):
-       zf_i[ip]=z_i[ip]-g*dz[ip-1]/denom             # g*cm/sec
-       zf_e[ip]=z_e[ip]+g*dz[ip-1]/denom             # g*cm/sec
+       zf_i[ip]=z_i[ip]-g*dz[ip-1]/denom                  # g*cm/sec
+       zf_e[ip]=z_e[ip]+g*dz[ip-1]/denom                  # g*cm/sec
     return zf_i,zf_e
 
 # plt.show()   
@@ -399,9 +394,17 @@ def draggCollision(deltaT,z_i,z_e):
 #
 # To draw trajectory of electron:
 #
+
+#
+# Returning to momenta:
+#
+z_elec[Ipx,:]=m_elec*rmsV_eTran*z_elec[Ipx,:]                       # g*cm/sec
+z_elec[Ipy,:]=m_elec*rmsV_eTran*z_elec[Ipy,:]                       # g*cm/sec
+z_elec[Ipz,:]=m_elec*rmsV_eLong*(z_elec[Ipz,:]-relShiftV_e)         # g*cm/sec
+
 zInit_ion=np.zeros(6)
 zInit_elec=np.zeros(6)
-timeTrack=np.zeros(201)
+timeTrack=np.zeros(201)                                # to draw the figure(100)
 zFin_ion=np.zeros((6,201))
 zFin_elec=np.zeros((6,201))
 for np in range(1):                                    # range(numb_p) 
@@ -479,74 +482,329 @@ plt.ylabel('y, $\mu m$',color='m',fontsize=16)
 #
 #################################################################
 
-"""   
+"""  
+
+""" 
+#################################################################
 #
-# 3D array for coordinate-vectors of all electons for all time step:
+#         Start of my "dragging" game of electrons !!!
 #
-# particles=array[[(xe,pxe,ye,pye,ze,pze)],[number of step],[number of electron]]
 #
-particles=np.zeros((6,numb_e,5))
+# 3D array "particles" - coordinate-vectors of all electrons for all time step 
+# (to draw figure 90 only!):
+#
+# particles=array[[(xe,pxe,ye,pye,ze,pze)],[number of time steps],[number of electrons]]
+#
+particles=np.zeros((6,1000,numb_e))
 cpuTime_p=np.zeros(numb_p)
 cpuTime_e=np.zeros(numb_e)
 elpsdTime_p=np.zeros(numb_p)
 elpsdTime_e=np.zeros(numb_e)
+
+#
+# Returning to momenta:
+#
+z_elec[Ipx,:]=m_elec*rmsV_eTran*z_elec[Ipx,:]                       # g*cm/sec
+z_elec[Ipy,:]=m_elec*rmsV_eTran*z_elec[Ipy,:]                       # g*cm/sec
+z_elec[Ipz,:]=m_elec*rmsV_eLong*(z_elec[Ipz,:]-relShiftV_e)         # g*cm/sec
+
 #
 # Dragging all selected electrons near each protons:
 #
-timeTrack=np.zeros(100000)
+deltaPion=np.zeros((3,numb_p))
+matr_ion=driftMatrix(M_ion,.5*timeStep)
+matr_elec=solenoid_eMatrix(B_mag,.5*timeStep)
 for np in range(1):                                    # range(numb_p): 
    for ne in range(5):                                 # range(neSlctd):
       timeStart=os.times()
-      neCrnt=indxTrns[ne]  
-      rhoCrnt=rhoLarm[neCrnt]                                 # mkm
-      lenghtInt=L_intrcn[neCrnt]                              # length of interaraction, cm
-      tolCrnt=tol[neCrnt]                                     # time of flight for, sec
-      turnsCrnt=trnsNmbr[neCrnt]                              # number of Larmour turns
-      stepsCrnt=stpsNmbr[neCrnt]                              # total number of steps
-      vel=(float(z_elec[Ipx,neCrnt]**2)+float(z_elec[Ipy,neCrnt]**2))/m_elec**2
-      print 'For %d: rho=%e, vel2=%e, T_larm=%e, timeStep=%e, tol=%e,trnsNmbr=%d, stpsNmbr=%d' % \
-            (neCrnt,rhoCrnt,vel,T_larm,timeStep,tolCrnt,turnsCrnt,stepsCrnt) 
+      neCrnt=indxTrns[ne] 
+      stepsCrnt=int(stpsNmbr[neCrnt])                         # total number of steps
+# For debugging:      
+#       rhoCrnt=rhoLarm[neCrnt]                                 # mkm
+#       lenghtInt=L_intrcn[neCrnt]                              # length of interaraction, cm
+#       tolCrnt=tol[neCrnt]                                     # time of flight for, sec
+#       turnsCrnt=int(trnsNmbr[neCrnt])                         # number of Larmour turns
+#       vel=(float(z_elec[Ipx,neCrnt]**2)+float(z_elec[Ipy,neCrnt]**2))/m_elec**2
+#       print 'For %d: rho=%e, vel2=%e, T_larm=%e, timeStep=%e, tol=%e,trnsNmbr=%d, stpsNmbr=%d' % \
+#             (neCrnt,rhoCrnt,vel,T_larm,timeStep,tolCrnt,turnsCrnt,stepsCrnt) 
       z_ion_crnt=z_ion[:,np]
       z_elec_crnt=z_elec[:,neCrnt]
       zFin_ion=[z_ion]
       zFin_elec=[z_elec]
       zFin_ion.append(z_ion_crnt)
       zFin_elec.append(z_elec_crnt)
-      zFin_ion.append(z_ion_crnt)
-      zFin_elec.append(z_elec_crnt)
-      matr_ion=driftMatrix(M_ion,.5*timeStep)
-      matr_elec=solenoid_eMatrix(B_mag,.5*timeStep)
-      for step in range(1000):                    #range(stepsCrnt):
+      for step in range(stepsCrnt):
          z_ion_crnt=matr_ion.dot(z_ion_crnt)
 	 z_elec_crnt=matr_elec.dot(z_elec_crnt)
          z_ion_crnt,z_elec_crnt=draggCollision(timeStep,z_ion_crnt,z_elec_crnt)
          z_ion_crnt=matr_ion.dot(z_ion_crnt)
 	 z_elec_crnt=matr_elec.dot(z_elec_crnt)
+         deltaPion[0,np] +=z_ion_crnt[Ipx]-z_ion[Ipx,np]
+         deltaPion[1,np] +=z_ion_crnt[Ipy]-z_ion[Ipy,np]
+         deltaPion[2,np] +=z_ion_crnt[Ipz]-z_ion[Ipz,np]
          zFin_ion.append(z_ion_crnt)
          zFin_elec.append(z_elec_crnt)
-	 timeTrack[step+1]=timeTrack[step]+timeStep
          particles[:,step,ne]=zFin_elec[step+1]
       timeEnd=os.times()
       cpuTime_e[ne]   +=float(timeEnd[0])-float(timeStart[0])     # CPU time for electron
       elpsdTime_e[ne] +=float(timeEnd[4])-float(timeStart[4])     # elapsed real time for electron
       cpuTime_p[np]   +=cpuTime_e[ne]                             # CPU time for proton
       elpsdTime_p[np] +=elpsdTime_e[ne]                           # elapsed real time for proton
+      print 'Electron %d: steps = %d, cpu(s) = %8.4f, elapsed(s) = %8.4f, cpu/step(mks) = %6.3f' % \
+            (neCrnt,stpsNmbr[neCrnt],cpuTime_e[ne],elpsdTime_e[ne], \
+	     1.e+6*cpuTime_e[ne]/(1.*stpsNmbr[neCrnt]))
+      
+   print '        Proton %d: electrons = %d, cpu(s) = %8.4f, elapsed(s) = %8.4f' % \
+         (np,neSlctd,cpuTime_p[np],elpsdTime_p[np])
 
-print 'cpuTime(for electrons): ',cpuTime_e[0:4]
-print 'elapsedTime(for electrons): ',elpsdTime_e[0:4]
-print 'cpuTime(for protons): ',cpuTime_p[0]
-print 'elapsedTime(for protons): ',elpsdTime_p[0]
 
 fig90=plt.figure(90)
 ax90=fig90.gca(projection='3d')
 ax90.plot(1.e+4*particles[Ix,0:200,0],1.e+4*particles[Iy,0:200,0],1.e+4*particles[Iz,0:200,0],'-r', \
           linewidth=2)
 plt.hold(True)
-for k in range(4):
-   ax90.plot(1.e+4*particles[Ix,0:200,k+1],1.e+4*particles[Iy,0:200,k+1],1.e+4*particles[Iz,0:200,k+1],'-r', \
+# for k in range(4):
+#    ax90.plot(1.e+4*particles[Ix,0:200,k+1],1.e+4*particles[Iy,0:200,k+1],1.e+4*particles[Iz,0:200,k+1],'-r', \
+#              linewidth=2)
+ax90.plot(1.e+4*particles[Ix,0:200,1],1.e+4*particles[Iy,0:200,1],1.e+4*particles[Iz,0:200,1],'-b', \
           linewidth=2)
-# plt.title(('Electron: Impact Parameter=%5.3f cm, Larmour=%5.3f $\mu$m' \
-#            % (impctPar[indxTrns[1]],rhoLarm[indxTrns[1]])), color='m',fontsize=16)
+ax90.plot(1.e+4*particles[Ix,0:200,2],1.e+4*particles[Iy,0:200,2],1.e+4*particles[Iz,0:200,2],'-m', \
+          linewidth=2)
+ax90.plot(1.e+4*particles[Ix,0:200,3],1.e+4*particles[Iy,0:200,3],1.e+4*particles[Iz,0:200,3],'-g', \
+          linewidth=2)
+ax90.plot(1.e+4*particles[Ix,0:200,4],1.e+4*particles[Iy,0:200,4],1.e+4*particles[Iz,0:200,4],'-k', \
+          linewidth=2)
+plt.title(('Electrons\nParticle 0: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 1: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 2: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 3: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 4: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m' % \
+           (1.e+4*impctPar[indxTrns[0]],rhoLarm[indxTrns[0]], \
+	    1.e+4*impctPar[indxTrns[1]],rhoLarm[indxTrns[1]], \
+	    1.e+4*impctPar[indxTrns[2]],rhoLarm[indxTrns[2]], \
+	    1.e+4*impctPar[indxTrns[3]],rhoLarm[indxTrns[3]], \
+	    1.e+4*impctPar[indxTrns[4]],rhoLarm[indxTrns[4]])), color='m',fontsize=6)
+plt.xlabel('x, $\mu m$',color='m',fontsize=16)
+plt.ylabel('y, $\mu m$',color='m',fontsize=16)
+#
+#         End of my "dragging" game !!!
+#
+#################################################################
+"""
+
+#================================================================
+#
+#  Integrations to calculate the friction force
+#z_elec[Ipx,:]
+#
+binsImpPar=30
+binsVe_tran=30
+binsVe_long=30
+
+impPar_slctd=np.zeros(binsImpPar)
+impPar_step=a_eBeam/binsImpPar
+for k in range(binsImpPar):
+   impPar_slctd[k]=impPar_step*(k+.5)
+
+#
+# Initial gaussian distributions of the relative transverse electron's velocity 
+# in polar velocities coordinates: 
+#
+ve_tran=np.zeros(numb_e)
+for i in range(numb_e):
+   ksi1=np.random.uniform(low=0.,high=1.,size=1)
+   ksi2=np.random.uniform(low=0.,high=1.,size=1)
+   z_elec[Ipx,i]=np.sqrt(-2.*math.log(ksi1))*math.cos(2.*pi*ksi2)  # dimensionless: eVx_tran/rmsV_eTran
+   z_elec[Ipy,i]=np.sqrt(-2.*math.log(ksi1))*math.sin(2.*pi*ksi2)  # dimensionless: eVy_tran/rmsV_eTran
+   ve_tran[i]=np.sqrt(z_elec[Ipx,i]**2+z_elec[Ipy,i]**2)          # dimensionless: ve_tran/rmsV_eTran
+
+# print 'z_elec[Ipx,:]=',z_elec[Ipx,:]
+# print 'z_elec[Ipy,:]=',z_elec[Ipy,:]
+stdVtran=ve_tran.std()
+print 'stdVtran=',stdVtran
+
+minVe_tran=np.min(ve_tran)                                   # dimensionless
+maxVe_tran=np.max(ve_tran)                                   # dimensionless
+
+stepVe_tran=(maxVe_tran-minVe_tran)/binsVe_tran              # dimensionless
+
+velEtran_slctd=np.zeros(binsVe_tran)                         # dimensionless
+for k in range(binsVe_tran):
+   velEtran_slctd[k]=minVe_tran+stepVe_tran*(k+.5)           # dimensionless
+
+print 'minVe_tran, maxVe_tran = ', (minVe_tran,maxVe_tran)
+# print 'velEtran_slctd = ',velEtran_slctd
+
+plt.figure(110)
+velTran_hist=plt.hist(ve_tran,bins=30)
+plt.xlabel('$V_{\perp} / V_{e\perp}$',color='m',fontsize=16)
+plt.ylabel('Particles',color='m',fontsize=16)
+plt.ylim([0,1.025*np.max(velTran_hist[0])])
+plt.title(('Initial Distribution of $V_{\perp} / V_{e\perp}$ (%d Particles)'  % numb_e), \
+          color='m',fontsize=16)
+# plt.text(0,1.025*np.max(velTran_hist[0]),('From Distribution: $V_{rms}$ = %6.4f' % stdVtran), \
+# 	 color='m',fontsize=16,ha='center')	  
+plt.grid(True)
+
+#
+# Initial uniform distribution of the velocity in cross section:
+#
+phi=np.random.uniform(high=2*pi,size=numb_e)
+for i in range(numb_e):
+   fi=np.random.uniform(high=2*pi,size=1)
+   z_elec[Ipx,i]=ve_tran[i]*math.cos(fi)                            # dimensionless 
+   z_elec[Ipy,i]=ve_tran[i]*math.sin(fi)                            # dimensionless 
+
+minVe_long=np.min(z_elec[Ipz,:])                                    # dimensionless
+maxVe_long=np.max(z_elec[Ipz,:])                                    # dimensionless
+
+velElong_slctd=np.zeros(binsVe_long)                                # dimensionless
+stepVe_long=(maxVe_long-minVe_long)/binsVe_long                     # dimensionless
+for k in range(binsVe_long):
+   velElong_slctd[k]=minVe_long+stepVe_long*(k+.5)                  # dimensionless
+
+print 'minVe_long, maxVe_long = ',(minVe_long,maxVe_tran)
+# print 'velElong_slctd = ',velElong_slctd
+
+#
+# Returning to momenta:
+#
+z_elec[Ipx,:]=m_elec*rmsV_eTran*z_elec[Ipx,:]                       # g*cm/sec
+z_elec[Ipy,:]=m_elec*rmsV_eTran*z_elec[Ipy,:]                       # g*cm/sec
+z_elec[Ipz,:]=m_elec*rmsV_eLong*(z_elec[Ipz,:]-relShiftV_e)         # g*cm/sec
+
+#
+# Preparation for integration:
+#
+factorIntgrtn_init=np.sqrt(2.*pi)*impPar_step*stepVe_tran*stepVe_long   # cm*(cm/sec)**2
+factorIntgrtn_init *= n_eBeam/(rmsV_eTran**2*rmsV_eLong)            # sec/cm**3
+print 'factorIntgrtn_init (sec/cm^3)= ',factorIntgrtn_init
+
+rhoLarm_slctd=np.zeros(binsVe_tran)
+particles=np.zeros((6,1000,binsImpPar))                             # to draw the trajectories
+cpuTime_p=np.zeros(numb_p)
+cpuTime_e=np.zeros(binsImpPar)
+elpsdTime_p=np.zeros(numb_p)
+elpsdTime_e=np.zeros(binsImpPar)
+
+frctnForce=np.zeros((3,numb_p))
+matr_ion=driftMatrix(M_ion,.5*timeStep)
+print 'matr_ion: ',matr_ion
+matr_elec=solenoid_eMatrix(B_mag,.5*timeStep)
+print 'matr_elec: ',matr_elec
+
+#
+# Integration along the larmour trajectories:
+#
+z_elec_crnt=np.zeros(6)                                             # Initial vector for electron
+z_ion_crnt=np.zeros(6)                                              # Initial vector for ion
+for nion in range(1):                       # range(numb_p):
+   for m in range(6):
+      z_ion_crnt[m]=0.                                              # Initial zero-vector for ion
+# All ions have the same longitudinal momenta:                        
+   z_ion_crnt[Ipz]=M_ion*shiftV_p                                   # pz, g*cm/sec                                                              
+   for j in range(1):                    # range(binsImpPar):
+      factorIntgrtn_crnt=impPar_slctd[j]                            # cm
+      intrcnLength=2.*impPar_slctd[j]*tangAlpha                     # length of interaction, cm
+      for k in range(1):                  # range(binsVe_long):
+         velLongCrnt=rmsV_eLong*(velElong_slctd[k]-relShiftV_e)     # vLong, cm/sec
+         timeOfLight=intrcnLength/np.abs(velLongCrnt)               # time of flight for electron, sec
+         turnsOflarmour=int(timeOfLight/T_larm)                     # total number of Larmour turns
+         timeSteps=int(timeOfLight/timeStep)                        # total number of steps
+         for i in range(5):                  # range(binsVe_tran):
+	    timeStart=os.times()
+            for m in range(6):
+               z_elec_crnt[m]=0.                                          # Initial zero-vector for electron
+#
+# Initial position of electrons: x=impactParameter, y=0:
+#
+            z_elec_crnt[Ix]=impPar_slctd[j]                               # x, cm
+ 	    numbCrntElec=binsVe_long*(binsVe_tran*j+k)+i
+            rhoLarm_slctd[i]=rmsV_eTran*velEtran_slctd[i]/Omega_e          # cm          
+            velTranCrnt=rmsV_eTran*velEtran_slctd[i]                       # vTran, cm/sec
+	    factorIntgrtn_crnt *= velTranCrnt                              # cm*cm/sec
+	    absDeltaV=np.sqrt(velTranCrnt**2+(shiftV_p-velLongCrnt)**2)    # |Vion-Velec|, cm/sec
+	    factorIntgrtn_crnt *= absDeltaV                                # cm*(cm/sec)**2
+# For checking of the trajectories:
+#            z_elec_crnt[Ipx]=0.                                            # px, g*cm/sec
+#            z_elec_crnt[Ipy]=m_elec*velTranCrnt                            # py, g*cm/sec
+            phi=np.random.uniform(low=0.,high=2.*pi,size=1)
+            z_elec_crnt[Ipx]=m_elec*velTranCrnt*math.cos(phi)              # px, g*cm/sec
+            z_elec_crnt[Ipy]=m_elec*velTranCrnt*math.sin(phi)              # py, g*cm/sec
+            z_elec_crnt[Ipz]=m_elec*velLongCrnt                            # pz, g*cm/sec
+            zFin_ion=[z_ion_crnt]
+            zFin_elec=[z_elec_crnt]
+            zFin_ion.append(z_ion_crnt)
+            zFin_elec.append(z_elec_crnt)
+#
+# Dragging  electron near each protons:
+#
+#             print 'Electron %d: steps = %d, rhoLarm(mkm) = %8.6f' % \
+#                   (numbCrntElec,timeSteps,1.e+4*rhoLarm_slctd[i])
+            for istep in range(timeSteps):
+               z_ion_crnt=matr_ion.dot(z_ion_crnt)
+ 	       z_elec_crnt=matr_elec.dot(z_elec_crnt)
+               z_ion_crnt,z_elec_crnt=draggCollision(timeStep,z_ion_crnt,z_elec_crnt)
+               z_ion_crnt=matr_ion.dot(z_ion_crnt)
+ 	       z_elec_crnt=matr_elec.dot(z_elec_crnt)
+               deltaPx_ion = z_ion_crnt[Ipx]-z_ion[Ipx,nion]               # deltaPx, g*cm/sec
+               deltaPy_ion = z_ion_crnt[Ipy]-z_ion[Ipy,nion]               # deltaPx, g*cm/sec
+               deltaPz_ion = z_ion_crnt[Ipz]-z_ion[Ipz,nion]               # deltaPx, g*cm/sec
+#                print 'deltaPion (step %d): %e %e %e ' % (istep,deltaPx_ion,deltaPy_ion,deltaPz_ion)
+               zFin_ion.append(z_ion_crnt)
+               zFin_elec.append(z_elec_crnt)
+# To draw first 5 electron trajectories for checking:	       
+#                particles[:,istep,numbCrntElec]=zFin_elec[istep+1]
+               particles[:,istep,numbCrntElec]=zFin_ion[istep+1]
+	       frctnForce[0,nion] += factorIntgrtn_crnt*deltaPx_ion        # g*cm*(cm/sec)**3
+	       frctnForce[1,nion] += factorIntgrtn_crnt*deltaPy_ion        # g*cm*(cm/sec)**3
+	       frctnForce[2,nion] += factorIntgrtn_crnt*deltaPz_ion        # g*cm*(cm/sec)**3
+#                print 'Friction force (step %d): %e %e %e ' % \
+# 	             (istep,frctnForce[0,nion],frctnForce[1,nion],frctnForce[2,nion])
+            print 'Friction force: %e %e %e ' % (frctnForce[0,nion],frctnForce[1,nion],frctnForce[2,nion])
+            timeEnd=os.times()
+            cpuTime_e[numbCrntElec]   += float(timeEnd[0])-float(timeStart[0])   # CPU time for electron
+            elpsdTime_e[numbCrntElec] += float(timeEnd[4])-float(timeStart[4])   # elapsed real time for electron
+            cpuTime_p[nion]   += cpuTime_e[numbCrntElec]                         # CPU time for proton
+            elpsdTime_p[nion] += elpsdTime_e[numbCrntElec]                       # elapsed real time for proton
+            print 'Electron %d: steps = %d, cpu(s) = %e, elapsed(s) = %e, cpu/step(mks) = %e' % \
+                  (numbCrntElec,timeSteps,cpuTime_e[numbCrntElec],elpsdTime_e[numbCrntElec], \
+		   1.e+6*cpuTime_e[numbCrntElec]/timeSteps)
+   frctnForce[0,nion] = frctnForce[0,nion]*factorIntgrtn_init                    # g*cm/sec**2
+   frctnForce[1,nion] = frctnForce[1,nion]*factorIntgrtn_init                    # g*cm/sec**2
+   frctnForce[2,nion] = frctnForce[2,nion]*factorIntgrtn_init                    # g*cm/sec**2
+   print '        Proton %d: electrons = %d, cpu(s) = %e, elapsed(s) = %e' % \
+         (nion,numbCrntElec+1,cpuTime_p[nion],elpsdTime_p[nion])
+   print 'Friction force: (ion %d) %e %e %e ' % (nion,frctnForce[0,nion],frctnForce[1,nion],frctnForce[2,nion])
+
+
+fig120=plt.figure(120)
+ax120=fig120.gca(projection='3d')
+points=41
+ax120.plot(1.e+4*particles[Ix,0:points,0],1.e+4*particles[Iy,0:points,0],1.e+4*particles[Iz,0:points,0],'-r', \
+          linewidth=2)
+plt.hold(True)
+# for k in range(4):
+#    ax120.plot(1.e+4*particles[Ix,0:200,k+1],1.e+4*particles[Iy,0:200,k+1],1.e+4*particles[Iz,0:200,k+1],'-r', \
+#              linewidth=2)
+ax120.plot(1.e+4*particles[Ix,0:points,1],1.e+4*particles[Iy,0:points,1],1.e+4*particles[Iz,0:points,1],'-b', \
+          linewidth=2)
+ax120.plot(1.e+4*particles[Ix,0:points,2],1.e+4*particles[Iy,0:points,2],1.e+4*particles[Iz,0:points,2],'-m', \
+          linewidth=2)
+ax120.plot(1.e+4*particles[Ix,0:points,3],1.e+4*particles[Iy,0:points,3],1.e+4*particles[Iz,0:points,3],'-g', \
+          linewidth=2)
+ax120.plot(1.e+4*particles[Ix,0:points,4],1.e+4*particles[Iy,0:points,4],1.e+4*particles[Iz,0:points,4],'-k', \
+          linewidth=2)
+plt.title(('Electrons\nParticle 0: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 1: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 2: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 3: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m \
+                     \nParticle 4: Impact Parameter=%5.3f $\mu$m, $R_{L}$=%5.3f $\mu$m' % \
+           (1.e+4*impPar_slctd[0],1.e+4*rhoLarm_slctd[0], \
+	    1.e+4*impPar_slctd[0],1.e+4*rhoLarm_slctd[1], \
+	    1.e+4*impPar_slctd[0],1.e+4*rhoLarm_slctd[2], \
+	    1.e+4*impPar_slctd[0],1.e+4*rhoLarm_slctd[3], \
+	    1.e+4*impPar_slctd[0],1.e+4*rhoLarm_slctd[4])), color='m',fontsize=6)
 plt.xlabel('x, $\mu m$',color='m',fontsize=16)
 plt.ylabel('y, $\mu m$',color='m',fontsize=16)
 
@@ -554,6 +812,11 @@ plt.ylabel('y, $\mu m$',color='m',fontsize=16)
 plt.show()   
 
 sys.exit()   
+
+#            phi=np.random.uniform(low=0.,high=2.*pi,size=1)
+#            z_elec_crnt[Ix]=impPar_slctd[j]*math.cos(phi)                 # x, cm
+#            z_elec_crnt[Iy]=impPar_slctd[j]*math.sin(phi)                 # y, cm
+
 
 #       print 'z_elec[:,0]: ',z_elec[:,0] 
 #       type_zFin_elec=isinstance(zFin_elec,list)

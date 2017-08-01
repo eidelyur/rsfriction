@@ -17,3 +17,9 @@ What was done during 07/28/2017:
 2) Code fFLOA writing and debugging continued:
       a) Ok with trajectories;
       b) Prepering of the next step - friction force calculation.
+
+What was done during 07/31/2017 - 08/01/2017:
+
+1) The study some new issues of Python.
+2) Code fFLOA writing and debugging continued:
+      a) Friction force calculation using integration along the electron Larmour trajectory.
