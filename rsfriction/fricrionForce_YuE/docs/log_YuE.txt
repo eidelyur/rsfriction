@@ -23,3 +23,14 @@ What was done during 07/31/2017 - 08/01/2017:
 1) The study some new issues of Python.
 2) Code fFLOA writing and debugging continued:
       a) Friction force calculation using integration along the electron Larmour trajectory.
+
+What was done during 08/02/2017 - 08/03/2017:
+
+1) Brlliant overview (Mechkov) was investigated. This is his improved report for COOL2016. 
+   I used the "trick", described by Igor (transition from 1.16 to 1.20) earlier (I wrote about it).
+   Very interesting!
+2) The study some new issues of Python.
+3) Code fFLOA writing and debugging continued:
+      a) "Games" with calculation of the friction force (FF) showed, how code must be changed 
+         to correctly calculate  the FF for magnetized electrons; I did not place the "gaming" 
+         version of the code to repository.
