@@ -178,6 +178,7 @@ N_ppt=40
 turns=10
 pointsPhi=N_ppt*turns
 fi=np.zeros(pointsPhi)
+
 Omega_omega_L=[np.sqrt(5.),1./0.577,1.2,1.00001]
 
 ro=np.zeros(4)
@@ -233,6 +234,14 @@ plt.title('$r(t)/ro_L=[1+4\cdot \omega_z^2/\Omega^2]^{1/2}$,  $\Omega=[\omega_L^
 plt.legend(['$\Omega/\omega_L=2.236$','$\Omega/\omega_L=1.733$','$\Omega/\omega_L=1.200$'],fontsize=16,loc='upper right')
 plt.grid(True)
 
+fig70=plt.figure(75)
+plt.plot(fi[0:1.5*N_ppt],(r[0:1.5*N_ppt,3]-1.)*1e+5,'-r',linewidth=2) 
+plt.xlabel('$\phi=\omega_L\cdot t$',color='m',fontsize=16)
+plt.ylabel('$10^5\cdot[r(t)/ro_L-1)]$',color='m',fontsize=16)
+plt.title('$r(t)/ro_L=[1+4\cdot \omega_z^2/\Omega^2]^{1/2}$,  $\Omega=[\omega_L^2+4\cdot\omega_z^2]^{1/2}$',color='m',fontsize=16)
+plt.legend(['$\Omega/\omega_L=1.00001$'],fontsize=16,loc='upper right')
+plt.grid(True)
+
 fig80=plt.figure(80)
 plt.plot(x[0*N_ppt:1*N_ppt+1,0],y[0*N_ppt:1*N_ppt+1,0],'-r',linewidth=2) 
 plt.hold(True)  
@@ -244,8 +253,9 @@ plt.plot(x[5*N_ppt:6*N_ppt+1,0],y[5*N_ppt:6*N_ppt+1,0],'-xr',linewidth=2,markers
 plt.plot(x[6*N_ppt:7*N_ppt+1,0],y[6*N_ppt:7*N_ppt+1,0],'-xb',linewidth=2,markersize=10) 
 plt.plot(x[7*N_ppt:8*N_ppt+1,0],y[7*N_ppt:8*N_ppt+1,0],'-xm',linewidth=2,markersize=10) 
 plt.plot(x[8*N_ppt:9*N_ppt+1,0],y[8*N_ppt:9*N_ppt+1,0],'-xg',linewidth=2,markersize=10) 
-plt.xlabel('x',color='m',fontsize=16)
-plt.ylabel('y',color='m',fontsize=16)
+plt.xlabel('$x/ro_L$',color='m',fontsize=16)
+plt.ylabel('$y/ro_L$',color='m',fontsize=16)
+plt.title('First 9 Turns: $\Omega/\omega_L=2.236$, $ro/ro_{crit}=4.9\cdot10^{-4}$',color='m',fontsize=16)
 plt.grid(True)
 plt.axes().set_aspect('equal')
    
@@ -260,8 +270,9 @@ plt.plot(x[5*N_ppt:6*N_ppt+1,1],y[5*N_ppt:6*N_ppt+1,1],'-xr',linewidth=2,markers
 plt.plot(x[6*N_ppt:7*N_ppt+1,1],y[6*N_ppt:7*N_ppt+1,1],'-xb',linewidth=2,markersize=10) 
 plt.plot(x[7*N_ppt:8*N_ppt+1,1],y[7*N_ppt:8*N_ppt+1,1],'-xm',linewidth=2,markersize=10) 
 plt.plot(x[8*N_ppt:9*N_ppt+1,1],y[8*N_ppt:9*N_ppt+1,1],'-xg',linewidth=2,markersize=10) 
-plt.xlabel('x',color='m',fontsize=16)
-plt.ylabel('y',color='m',fontsize=16)
+plt.xlabel('$x/ro_L$',color='m',fontsize=16)
+plt.ylabel('$y/ro_L$',color='m',fontsize=16)
+plt.title('First 9 Turns: $\Omega/\omega_L=1.733$, $ro/ro_{crit}=6.2\cdot10^{-4}$',color='m',fontsize=16)
 plt.grid(True)
 plt.axes().set_aspect('equal')
  
@@ -277,8 +288,26 @@ plt.plot(x[5*N_ppt:6*N_ppt+1,2],y[5*N_ppt:6*N_ppt+1,2],'-xr',linewidth=2,markers
 plt.plot(x[6*N_ppt:7*N_ppt+1,2],y[6*N_ppt:7*N_ppt+1,2],'-xb',linewidth=2,markersize=10) 
 plt.plot(x[7*N_ppt:8*N_ppt+1,2],y[7*N_ppt:8*N_ppt+1,2],'-xm',linewidth=2,markersize=10) 
 plt.plot(x[8*N_ppt:9*N_ppt+1,2],y[8*N_ppt:9*N_ppt+1,2],'-xg',linewidth=2,markersize=10) 
-plt.xlabel('x',color='m',fontsize=16)
-plt.ylabel('y',color='m',fontsize=16)
+plt.xlabel('$x/ro_L$',color='m',fontsize=16)
+plt.ylabel('$y/ro_L$',color='m',fontsize=16)
+plt.title('First 9 Turns: $\Omega/\omega_L=1.002$, $ro/ro_{crit}=1.03\cdot10^{-3}$',color='m',fontsize=16)
+plt.grid(True)
+plt.axes().set_aspect('equal')
+   
+fig110=plt.figure(110)
+plt.plot(x[0*N_ppt:1*N_ppt+1,3],y[0*N_ppt:1*N_ppt+1,3],'-r',linewidth=2) 
+plt.hold(True)  
+plt.plot(x[1*N_ppt:2*N_ppt+1,3],y[1*N_ppt:2*N_ppt+1,3],'-b',linewidth=2) 
+plt.plot(x[2*N_ppt:3*N_ppt+1,3],y[2*N_ppt:3*N_ppt+1,3],'-m',linewidth=2) 
+plt.plot(x[3*N_ppt:4*N_ppt+1,3],y[3*N_ppt:4*N_ppt+1,3],'-g',linewidth=2) 
+plt.plot(x[4*N_ppt:5*N_ppt+1,3],y[4*N_ppt:5*N_ppt+1,3],'-k',linewidth=2) 
+plt.plot(x[5*N_ppt:6*N_ppt+1,3],y[5*N_ppt:6*N_ppt+1,3],'-xr',linewidth=2,markersize=10) 
+plt.plot(x[6*N_ppt:7*N_ppt+1,3],y[6*N_ppt:7*N_ppt+1,3],'-xb',linewidth=2,markersize=10) 
+plt.plot(x[7*N_ppt:8*N_ppt+1,3],y[7*N_ppt:8*N_ppt+1,3],'-xm',linewidth=2,markersize=10) 
+plt.plot(x[8*N_ppt:9*N_ppt+1,3],y[8*N_ppt:9*N_ppt+1,3],'-xg',linewidth=2,markersize=10) 
+plt.xlabel('$x/ro_L$',color='m',fontsize=16)
+plt.ylabel('$y/ro_L$',color='m',fontsize=16)
+plt.title('First 9 Turns: $\Omega/\omega_L=1.00001$, $ro/ro_{crit}=2.9\cdot10^{-2}$',color='m',fontsize=16)
 plt.grid(True)
 plt.axes().set_aspect('equal')
    

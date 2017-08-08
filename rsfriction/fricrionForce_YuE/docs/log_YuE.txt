@@ -34,3 +34,11 @@ What was done during 08/02/2017 - 08/03/2017:
       a) "Games" with calculation of the friction force (FF) showed, how code must be changed 
          to correctly calculate  the FF for magnetized electrons; I did not place the "gaming" 
          version of the code to repository.
+
+What was done during 08/04/2017, 08/06/2017 - 08/07/2017:
+
+1) kinematicMagnetizedElectron.py code (kME) was written to investigate the range of impact 
+   parameters which must be take into account in fFLOA code.
+2) kME code and figures as results are placed in repository.
+3) Code fFLOA writing and debugging continued.
+ 
