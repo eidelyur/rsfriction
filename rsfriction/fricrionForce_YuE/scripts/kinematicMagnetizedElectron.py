@@ -89,7 +89,7 @@ print 'omega_e = %e rad/sec' % omega_e
 #
 rhoCrit=math.pow(q_elec**2/(m_elec*omega_L**2),1./3)      # cm
 maxLogRho=math.log10(a_eBeam/rhoCrit)
-minLogRho=0.
+minLogRho=-1.
 
 print 'rhoCrit = %e cm, maxLogRho = %e' % (rhoCrit,maxLogRho)
 
@@ -141,9 +141,9 @@ plt.grid(True)
 fig30=plt.figure(30)
 plt.loglog(rhoCrrnt/rhoCrit,omega_z/omega_L,'-r',linewidth=2)   
 plt.xlim([rhoCrrnt[0]/rhoCrit,rhoCrrnt[pointsLog10-1]/rhoCrit])
-plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Zq_e^2/(m_e \cdot \omega_L^2]^{1/3}$',color='m',fontsize=16)
+plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Z_ie^2/(m\cdot\omega_L^2]^{1/3}$',color='m',fontsize=16)
 plt.ylabel('$\omega_z/\omega_L$',color='m',fontsize=16)
-plt.title('$\omega_z/\omega_L$',color='m',fontsize=16)
+plt.title('$\omega_z/\omega_L=(ro/ro_{crit})^{-3/2}$',color='m',fontsize=16)
 plt.grid(True)
    
 '''   
@@ -158,9 +158,10 @@ plt.grid(True)
 fig50=plt.figure(50)
 plt.semilogx(rhoCrrnt/rhoCrit,Omega/omega_L,'-r',linewidth=2)   
 plt.xlim([rhoCrrnt[0]/rhoCrit,rhoCrrnt[pointsLog10-1]/rhoCrit])
-plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Zq_e^2/(m_e \cdot \omega_L^2]^{1/3}$',color='m',fontsize=16)
+plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Z_ie^2/(m\cdot\omega_L^2]^{1/3}$',color='m',fontsize=16)
 plt.ylabel('$\Omega/\omega_L$',color='m',fontsize=16)
-plt.title('$\Omega=[\omega_L^2+4\cdot\omega_z^2]^{1/2}$',color='m',fontsize=16)
+plt.title('$\Omega=[\omega_L^2+4\cdot\omega_z^2]^{1/2}=\omega_L\cdot[1+4/(ro/ro_{crit})^3]^{1/2}$', \
+          color='m',fontsize=16)
 plt.grid(True)
 
 '''   
@@ -308,6 +309,23 @@ plt.plot(x[8*N_ppt:9*N_ppt+1,3],y[8*N_ppt:9*N_ppt+1,3],'-xg',linewidth=2,markers
 plt.xlabel('$x/ro_L$',color='m',fontsize=16)
 plt.ylabel('$y/ro_L$',color='m',fontsize=16)
 plt.title('First 9 Turns: $\Omega/\omega_L=1.00001$, $ro/ro_{crit}=2.9\cdot10^{-2}$',color='m',fontsize=16)
+plt.grid(True)
+plt.axes().set_aspect('equal')
+   
+fig120=plt.figure(120)
+plt.plot(x[0*N_ppt:1*N_ppt+1,0],y[0*N_ppt:1*N_ppt+1,0],'-r',linewidth=2) 
+plt.hold(True)  
+plt.plot(x[0*N_ppt:1*N_ppt+1,1],y[0*N_ppt:1*N_ppt+1,1],'-b',linewidth=2) 
+plt.plot(x[0*N_ppt:1*N_ppt+1,2],y[0*N_ppt:1*N_ppt+1,2],'-m',linewidth=2) 
+plt.plot(x[0*N_ppt:1*N_ppt+1,3],y[0*N_ppt:1*N_ppt+1,3],'-g',linewidth=2) 
+plt.xlabel('$x/ro_L$',color='m',fontsize=16)
+plt.ylabel('$y/ro_L$',color='m',fontsize=16)
+plt.title('First Turn for Different $ro/ro_{crit}$ with $ro_{crit}=[Z_ie^2/(m\omega_L^2)]^{1/3}$', \
+          color='m',fontsize=16)
+# plt.legend(['$ro/ro_{crit}=4.9\cdot10^{-4}$','$ro/ro_{crit}=6.2\cdot10^{-4}$', \
+#             '$ro/ro_{crit}=1.03\cdot10^{-3}$','$ro/ro_{crit}=2.88\cdot10^{-2}$'],fontsize=16,loc='upper left')
+plt.legend(['$4.9\cdot10^{-4}$','$6.2\cdot10^{-4}$','$1.0\cdot10^{-3}$','$2.9\cdot10^{-2}$'], \
+           fontsize=16,loc='upper left')
 plt.grid(True)
 plt.axes().set_aspect('equal')
    
