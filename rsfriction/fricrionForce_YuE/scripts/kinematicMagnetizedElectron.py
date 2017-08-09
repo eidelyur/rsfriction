@@ -94,10 +94,28 @@ minLogRho=-1.
 print 'rhoCrit = %e cm, maxLogRho = %e' % (rhoCrit,maxLogRho)
 
 
+pointsRo=50
+minB=.1                    # Gs
+maxB=4000.                 # Gs
 
+crrntB=np.zeros(pointsRo)
+roCrtCrrnt=np.zeros(pointsRo)
 
-
-
+for i in range(pointsRo):
+   crrntB[i]=minB+(maxB-minB)/pointsRo*(i+1)
+   freqL=q_elec*crrntB[i]/(m_elec*clight*1.e+2)
+   roCrtCrrnt[i]=math.pow(q_elec**2/m_elec/freqL**2,1./3.)
+   
+fig5=plt.figure(5)
+plt.plot(crrntB,1e+4*roCrtCrrnt,'-r',linewidth=2)   
+plt.xlabel('B, Gs',color='m',fontsize=16)
+plt.ylabel('$ro_{crit}$, $\mu$m',color='m',fontsize=16)
+plt.title('Area of of Magnetization: $ro$ >> $ro_{crit}=[Z_ie^2/(m\cdot\omega_L^2]^{1/3}$',color='m',fontsize=16)
+# plt.xlim([minLogRho,maxLogRho])
+plt.grid(True)
+   
+   
+   
 pointsLog10=50
 log10Rho=np.zeros(pointsLog10)
 rhoCrrnt=np.zeros(pointsLog10)
@@ -121,9 +139,9 @@ print 'rhoCrrnt =', rhoCrrnt
 '''
 fig10=plt.figure(10)
 plt.semilogy(range(pointsLog10),rhoCrrnt/rhoCrit,'.r')   
-plt.xlabel('Point',color='m',fontsize=16)
+plt.xlabel('Point',color=','m',fontsize=16)
 plt.ylabel('$ro/ro_{crit}$',color='m',fontsize=16)
-plt.title('$rho/rho_{crit}$',color='m',fontsize=16)
+plt.title('$ro/ro_{crit}$',color='m',fontsize=16)
 # plt.xlim([minLogRho,maxLogRho])
 plt.grid(True)
 '''   
@@ -158,6 +176,16 @@ plt.grid(True)
 fig50=plt.figure(50)
 plt.semilogx(rhoCrrnt/rhoCrit,Omega/omega_L,'-r',linewidth=2)   
 plt.xlim([rhoCrrnt[0]/rhoCrit,rhoCrrnt[pointsLog10-1]/rhoCrit])
+plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Z_ie^2/(m\cdot\omega_L^2]^{1/3}$',color='m',fontsize=16)
+plt.ylabel('$\Omega/\omega_L$',color='m',fontsize=16)
+plt.title('$\Omega=[\omega_L^2+4\cdot\omega_z^2]^{1/2}=\omega_L\cdot[1+4/(ro/ro_{crit})^3]^{1/2}$', \
+          color='m',fontsize=16)
+plt.grid(True)
+
+fig55=plt.figure(55)
+plt.semilogx(rhoCrrnt/rhoCrit,Omega/omega_L,'-r',linewidth=2)   
+plt.xlim([1.,rhoCrrnt[pointsLog10-1]/rhoCrit])
+plt.ylim([0.9,2.5])
 plt.xlabel('Impact Parameter: $ro/ro_{crit}$; $ro_{crit}=[Z_ie^2/(m\cdot\omega_L^2]^{1/3}$',color='m',fontsize=16)
 plt.ylabel('$\Omega/\omega_L$',color='m',fontsize=16)
 plt.title('$\Omega=[\omega_L^2+4\cdot\omega_z^2]^{1/2}=\omega_L\cdot[1+4/(ro/ro_{crit})^3]^{1/2}$', \
