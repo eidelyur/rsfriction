@@ -357,7 +357,59 @@ plt.legend(['$4.9\cdot10^{-4}$','$6.2\cdot10^{-4}$','$1.0\cdot10^{-3}$','$2.9\cd
 plt.grid(True)
 plt.axes().set_aspect('equal')
    
-   
+
+#
+# Plot for maximamal impact parameter:
+#   
+densElec=[1.e7,1.e8,1.e9]
+tempL=eVtoErg*1.e-4
+
+neutR=np.zeros(3)
+debyeR=np.zeros(3)
+
+for i in range(3):
+   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
+   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
+
+print 'neutR: ', neutR
+print 'debyeR: ', debyeR
+
+'''
+denseRneut=6.3     # mkm
+rareRneut=24.7     # mkm
+denseSlopeD=1.5    # mkm
+rareSlopeD=26.3    # mkm
+'''
+pointsVrel=50
+velRel=np.zeros(pointsVrel)
+neutRcrrnt=np.zeros((pointsVrel,3))
+debyeRcrrnt=np.zeros((pointsVrel,3))
+
+maxVrel=3.
+
+for j in range(3):
+   for i in range(pointsVrel):
+      velRel[i]=maxVrel*i/pointsVrel
+      neutRcrrnt[i,j]=neutR[j]
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+
+fig130=plt.figure(130)
+plt.plot(velRel,debyeRcrrnt[:,0],'-r',linewidth=2)
+plt.hold(True)  
+plt.plot(velRel,debyeRcrrnt[:,1],'-m',linewidth=2)
+plt.plot(velRel,debyeRcrrnt[:,2],'-b',linewidth=2)
+plt.plot(velRel,neutRcrrnt[:,0],'--r',linewidth=2)
+plt.plot(velRel,neutRcrrnt[:,1],'--m',linewidth=2)
+plt.plot(velRel,neutRcrrnt[:,2],'--b',linewidth=2)
+plt.xlabel('Relative Velocity $V/\Delta_{||}$',color='m',fontsize=16)
+plt.ylabel('$ro$, $\mu$m',color='m',fontsize=16)
+plt.title('Map of Maximal Impact Parameter: $ro_{max}=max${$R_z,R_D$}',color='m',fontsize=16)
+plt.legend(['$R_D$ ($n_e=10^7$ cm$^{-3}$)','$R_D$ ($n_e=10^8$ cm$^{-3}$)','$R_D$ ($n_e=10^9$ cm$^{-3}$)', \
+            '$R_z$ ($n_e=10^7$ cm$^{-3}$)','$R_z$ ($n_e=10^8$ cm$^{-3}$)','$R_z$ ($n_e=10^9$ cm$^{-3}$)'], \
+            fontsize=16,loc='upper left')
+plt.grid(True)
+
+
 plt.show()   
 
 sys.exit()   
