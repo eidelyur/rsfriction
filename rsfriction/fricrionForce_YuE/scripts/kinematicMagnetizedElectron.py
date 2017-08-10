@@ -359,56 +359,184 @@ plt.axes().set_aspect('equal')
    
 
 #
-# Plot for maximamal impact parameter:
+# Plot for maximamal impact parameter R_shield:
 #   
-densElec=[1.e7,1.e8,1.e9]
 tempL=eVtoErg*1.e-4
 
-neutR=np.zeros(3)
-debyeR=np.zeros(3)
+pointsDens=20
+densElec=np.zeros(pointsDens)
 
-for i in range(3):
+minDensElec=1.e7
+maxDensElec=1.e9
+log10minDens=math.log10(minDensElec)
+log10maxDens=math.log10(maxDensElec)
+
+for i in range(pointsDens):
+   log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
+   densElec[i]=math.pow(10,log10crrnt)
+
+# print 'densElec: ', densElec
+
+neutR=np.zeros(pointsDens)
+debyeR=np.zeros(pointsDens)
+
+for i in range(pointsDens):
    neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
    debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
 
-print 'neutR: ', neutR
-print 'debyeR: ', debyeR
+print 'densElec, debyeR: ', debyeR,densElec
 
-'''
-denseRneut=6.3     # mkm
-rareRneut=24.7     # mkm
-denseSlopeD=1.5    # mkm
-rareSlopeD=26.3    # mkm
-'''
-pointsVrel=50
+pointsVrel=100
 velRel=np.zeros(pointsVrel)
-neutRcrrnt=np.zeros((pointsVrel,3))
-debyeRcrrnt=np.zeros((pointsVrel,3))
+neutRcrrnt=np.zeros((pointsVrel,pointsDens))
+debyeRcrrnt=np.zeros((pointsVrel,pointsDens))
+roMaxCrrnt=np.zeros((pointsVrel,pointsDens))
 
-maxVrel=3.
+maxVrel=4.
 
-for j in range(3):
+for j in range(pointsDens):
    for i in range(pointsVrel):
       velRel[i]=maxVrel*i/pointsVrel
       neutRcrrnt[i,j]=neutR[j]
       debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      if velRel[i] < 1: 
+         debyeRcrrnt[i,j]=debyeR[j]
+
+for j in range(pointsDens):
+   for i in range(pointsVrel):
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+
 
 fig130=plt.figure(130)
 plt.plot(velRel,debyeRcrrnt[:,0],'-r',linewidth=2)
 plt.hold(True)  
-plt.plot(velRel,debyeRcrrnt[:,1],'-m',linewidth=2)
-plt.plot(velRel,debyeRcrrnt[:,2],'-b',linewidth=2)
+plt.plot(velRel,debyeRcrrnt[:,10],'-m',linewidth=2)
+plt.plot(velRel,debyeRcrrnt[:,pointsDens-1],'-b',linewidth=2)
 plt.plot(velRel,neutRcrrnt[:,0],'--r',linewidth=2)
-plt.plot(velRel,neutRcrrnt[:,1],'--m',linewidth=2)
-plt.plot(velRel,neutRcrrnt[:,2],'--b',linewidth=2)
+plt.plot(velRel,neutRcrrnt[:,10],'--m',linewidth=2)
+plt.plot(velRel,neutRcrrnt[:,pointsDens-1],'--b',linewidth=2)
 plt.xlabel('Relative Velocity $V/\Delta_{||}$',color='m',fontsize=16)
-plt.ylabel('$ro$, $\mu$m',color='m',fontsize=16)
-plt.title('Map of Maximal Impact Parameter: $ro_{max}=max${$R_z,R_D$}',color='m',fontsize=16)
+plt.ylabel('$R_D$ & $R_z$, $\mu$m',color='m',fontsize=16)
+plt.title('$R_D=V_i/\Delta_{||} \cdot [T_{||} /(2 \pi e^2 n_e)]^{1/2}$, $R_z=[3Z_i/(4n_e)]^{1/3}$', \
+          color='m',fontsize=16)
 plt.legend(['$R_D$ ($n_e=10^7$ cm$^{-3}$)','$R_D$ ($n_e=10^8$ cm$^{-3}$)','$R_D$ ($n_e=10^9$ cm$^{-3}$)', \
             '$R_z$ ($n_e=10^7$ cm$^{-3}$)','$R_z$ ($n_e=10^8$ cm$^{-3}$)','$R_z$ ($n_e=10^9$ cm$^{-3}$)'], \
             fontsize=16,loc='upper left')
 plt.grid(True)
 
+
+fig140=plt.figure(140)
+plt.plot(velRel,roMaxCrrnt[:,0],'-r',linewidth=2)
+plt.hold(True)  
+plt.plot(velRel,roMaxCrrnt[:,10],'-m',linewidth=2)
+plt.plot(velRel,roMaxCrrnt[:,pointsDens-1],'-b',linewidth=2)
+plt.xlabel('Relative Velocity $V/\Delta_{||}$',color='m',fontsize=16)
+plt.ylabel('$R_{shield}$, $\mu$m',color='m',fontsize=16)
+plt.title('$R_{shield}$=max{$R_z,R_D$}',color='m',fontsize=16)
+plt.legend(['$n_e=10^7$ cm$^{-3}$','$n_e=10^8$ cm$^{-3}$','$n_e=10^9$ cm$^{-3}$'], \
+            fontsize=16,loc='upper left')
+plt.grid(True)
+
+
+minDensElec=1.e7
+maxDensElec=1.e8
+log10minDens=math.log10(minDensElec)
+log10maxDens=math.log10(maxDensElec)
+
+for i in range(pointsDens):
+   log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
+   densElec[i]=math.pow(10,log10crrnt)
+
+# print 'densElec: ', densElec
+
+neutR=np.zeros(pointsDens)
+debyeR=np.zeros(pointsDens)
+
+for i in range(pointsDens):
+   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
+   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
+
+pointsVrel=100
+velRel=np.zeros(pointsVrel)
+neutRcrrnt=np.zeros((pointsVrel,pointsDens))
+debyeRcrrnt=np.zeros((pointsVrel,pointsDens))
+roMaxCrrnt=np.zeros((pointsVrel,pointsDens))
+
+maxVrel=4.
+
+for j in range(pointsDens):
+   for i in range(pointsVrel):
+      velRel[i]=maxVrel*i/pointsVrel
+      neutRcrrnt[i,j]=neutR[j]
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      if velRel[i] < 1: 
+         debyeRcrrnt[i,j]=debyeR[j]
+
+for j in range(pointsDens):
+   for i in range(pointsVrel):
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+
+
+X,Y=np.meshgrid(densElec,velRel)      
+fig150=plt.figure(150)
+ax150=fig150.gca(projection='3d')
+surf=ax150.plot_surface(X,Y,roMaxCrrnt,cmap=cm.coolwarm,linewidth=0,antialiased=False)
+plt.title('$R_{shield}$=max{$R_z,R_D$}', color='m',fontsize=20)
+plt.xlabel('$n_e$, cm$^{-3}$',color='m',fontsize=16)
+plt.ylabel('$V/\Delta_{||}$',color='m',fontsize=16)
+ax150.set_zlabel('$R_{shield}$, $\mu$m',color='m',fontsize=16)
+fig150.colorbar(surf, shrink=0.5, aspect=5)
+plt.grid(True)
+
+minDensElec=1.e8
+maxDensElec=1.e9
+log10minDens=math.log10(minDensElec)
+log10maxDens=math.log10(maxDensElec)
+
+for i in range(pointsDens):
+   log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
+   densElec[i]=math.pow(10,log10crrnt)
+
+# print 'densElec: ', densElec
+
+neutR=np.zeros(pointsDens)
+debyeR=np.zeros(pointsDens)
+
+for i in range(pointsDens):
+   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
+   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
+
+pointsVrel=100
+velRel=np.zeros(pointsVrel)
+neutRcrrnt=np.zeros((pointsVrel,pointsDens))
+debyeRcrrnt=np.zeros((pointsVrel,pointsDens))
+roMaxCrrnt=np.zeros((pointsVrel,pointsDens))
+
+maxVrel=4.
+
+for j in range(pointsDens):
+   for i in range(pointsVrel):
+      velRel[i]=maxVrel*i/pointsVrel
+      neutRcrrnt[i,j]=neutR[j]
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      if velRel[i] < 1: 
+         debyeRcrrnt[i,j]=debyeR[j]
+
+for j in range(pointsDens):
+   for i in range(pointsVrel):
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+
+
+X,Y=np.meshgrid(densElec,velRel)      
+fig160=plt.figure(160)
+ax160=fig160.gca(projection='3d')
+surf=ax160.plot_surface(X,Y,roMaxCrrnt,cmap=cm.coolwarm,linewidth=0,antialiased=False)
+plt.title('$R_{shield}$=max{$R_z,R_D$}', color='m',fontsize=20)
+plt.xlabel('$n_e$, cm$^{-3}$',color='m',fontsize=16)
+plt.ylabel('$V/\Delta_{||}$',color='m',fontsize=16)
+ax160.set_zlabel('$R_{shield}$, $\mu$m',color='m',fontsize=16)
+fig160.colorbar(surf, shrink=0.5, aspect=5)
+plt.grid(True)
 
 plt.show()   
 

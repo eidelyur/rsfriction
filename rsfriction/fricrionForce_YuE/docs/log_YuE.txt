@@ -35,10 +35,12 @@ What was done during 08/02/2017 - 08/03/2017:
          to correctly calculate  the FF for magnetized electrons; I did not place the "gaming" 
          version of the code to repository.
 
-What was done during 08/04/2017, 08/06/2017 - 08/07/2017:
 
-1) kinematicMagnetizedElectron.py code (kME) was written to investigate the range of impact 
-   parameters which must be take into account in fFLOA code.
-2) kME code and figures as results are placed in repository.
+
+What was done during 08/04/2017, 08/08/2017 - 08/10/2017:
+
+1) kinematicMagnetizedElectron.py code (kME) was developed. 
+2) Documents 'kinematicOfMagnetizedElectron.docx' and 
+   'mapOfMaximalImpactParameter.docx' are written (see into repository).
 3) Code fFLOA writing and debugging continued.
  
