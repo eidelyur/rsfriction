@@ -37,10 +37,11 @@ What was done during 08/02/2017 - 08/03/2017:
 
 
 
-What was done during 08/04/2017, 08/08/2017 - 08/10/2017:
 
-1) kinematicMagnetizedElectron.py code (kME) was developed. 
-2) Documents 'kinematicOfMagnetizedElectron.docx' and 
-   'mapOfMaximalImpactParameter.docx' are written (see into repository).
-3) Code fFLOA writing and debugging continued.
+What was done during 08/11/2017:
+
+1) Documents 'kinematicOfMagnetizedElectron.docx' and 
+   'mapOfMaximalImpactParameter.docx' are finished. Resukts are included
+   in new version of code ffLOA under new name frictionForceIntegration.py (fFI)
+2) Code fFI under developing and debugging.
  

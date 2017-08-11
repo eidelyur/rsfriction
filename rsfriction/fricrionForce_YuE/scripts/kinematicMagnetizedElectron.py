@@ -373,7 +373,7 @@ log10maxDens=math.log10(maxDensElec)
 
 for i in range(pointsDens):
    log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
-   densElec[i]=math.pow(10,log10crrnt)
+   densElec[i]=math.pow(10,log10crrnt)                             # cm^-3
 
 # print 'densElec: ', densElec
 
@@ -381,8 +381,8 @@ neutR=np.zeros(pointsDens)
 debyeR=np.zeros(pointsDens)
 
 for i in range(pointsDens):
-   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
-   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
+   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)                    # mkm 
+   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))       # mkm
 
 print 'densElec, debyeR: ', debyeR,densElec
 
@@ -396,15 +396,15 @@ maxVrel=4.
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      velRel[i]=maxVrel*i/pointsVrel
+      velRel[i]=maxVrel*i/pointsVrel                               # dimensionless
       neutRcrrnt[i,j]=neutR[j]
-      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]                         # mkm
       if velRel[i] < 1: 
-         debyeRcrrnt[i,j]=debyeR[j]
+         debyeRcrrnt[i,j]=debyeR[j]                                # mkm
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])        # mkm
 
 
 fig130=plt.figure(130)
@@ -445,16 +445,16 @@ log10maxDens=math.log10(maxDensElec)
 
 for i in range(pointsDens):
    log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
-   densElec[i]=math.pow(10,log10crrnt)
+   densElec[i]=math.pow(10,log10crrnt)                             # cm^-3
 
 # print 'densElec: ', densElec
 
 neutR=np.zeros(pointsDens)
 debyeR=np.zeros(pointsDens)
 
-for i in range(pointsDens):
-   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)
-   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))
+for i in range(pointsDens):       # mkm
+   neutR[i]=1e4*math.pow(.75/densElec[i],1./3.)                    # mkm
+   debyeR[i]=1e4*np.sqrt(tempL/(2*pi*q_elec**2*densElec[i]))       # mkm
 
 pointsVrel=100
 velRel=np.zeros(pointsVrel)
@@ -466,15 +466,15 @@ maxVrel=4.
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      velRel[i]=maxVrel*i/pointsVrel
-      neutRcrrnt[i,j]=neutR[j]
-      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      velRel[i]=maxVrel*i/pointsVrel                               # dimensuionless 
+      neutRcrrnt[i,j]=neutR[j]                                     # mkm
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]                         # mkm
       if velRel[i] < 1: 
-         debyeRcrrnt[i,j]=debyeR[j]
+         debyeRcrrnt[i,j]=debyeR[j]                                # mkm
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])        # mkm
 
 
 X,Y=np.meshgrid(densElec,velRel)      
@@ -495,7 +495,7 @@ log10maxDens=math.log10(maxDensElec)
 
 for i in range(pointsDens):
    log10crrnt=log10minDens+(log10maxDens-log10minDens)/(pointsDens-1)*i
-   densElec[i]=math.pow(10,log10crrnt)
+   densElec[i]=math.pow(10,log10crrnt)                             # cm^-3
 
 # print 'densElec: ', densElec
 
@@ -516,15 +516,15 @@ maxVrel=4.
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      velRel[i]=maxVrel*i/pointsVrel
-      neutRcrrnt[i,j]=neutR[j]
-      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]
+      velRel[i]=maxVrel*i/pointsVrel                               # dimensuionless
+      neutRcrrnt[i,j]=neutR[j]                                     # mkm
+      debyeRcrrnt[i,j]=debyeR[j]*velRel[i]                         # mkm
       if velRel[i] < 1: 
-         debyeRcrrnt[i,j]=debyeR[j]
+         debyeRcrrnt[i,j]=debyeR[j]                                # mkm
 
 for j in range(pointsDens):
    for i in range(pointsVrel):
-      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])
+      roMaxCrrnt[i,j]=max(neutRcrrnt[i,j],debyeRcrrnt[i,j])        # mkm
 
 
 X,Y=np.meshgrid(densElec,velRel)      
