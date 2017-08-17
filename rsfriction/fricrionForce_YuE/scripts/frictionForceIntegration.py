@@ -47,7 +47,7 @@ from scipy.constants import Boltzmann as kB
 #
 #--------------------------------------------------------------------------------------
 
-eVtoErg=1.602e-12                # energy from eV to erg (from CI to CGS)
+eVtoErg=1.602e-12                                                  # energy from eV to erg (from CI to CGS)
 # Indices:
 (Ix, Ipx, Iy, Ipy, Iz, Ipz) = range(6)
 
@@ -65,11 +65,11 @@ eTempLong = 2.e-4                                                  # longitudina
 numb_e = 1000                                                      # number of electrons
 numb_p = 50                                                        # number of protons
 
-eBeamRad = 0.1                   # cm
-eBeamDens = 1.e+8                # cm^-3
-kinEnergy_eBeam=470.*eVtoErg     # erg
+eBeamRad = 0.1                                                     # cm
+eBeamDens = 1.e+8                                                  # cm^-3
+kinEnergy_eBeam=470.*eVtoErg                                       # erg
 
-stepsNumberOnGyro = 40           # number of the steps on each Larmour period
+stepsNumberOnGyro = 40                                             # number of the steps on each Larmour period
 
 #
 # Larmor frequency electron:
@@ -110,7 +110,7 @@ print '<ro_larm> , mkm = ', ro_larm*1.e4
 # Plasma frequency of the beam:
 #
 omega_e=np.sqrt(4*pi*eBeamDens*q_elec**2/m_elec)                   # rad/sec
-print 'omega_e = %e rad/sec' % omega_e
+print 'Plasma''s frequency: omega_e = %e rad/sec' % omega_e
 
 #
 # 2D marices for all electrons and ions:
@@ -152,7 +152,7 @@ def fromGuidingCenter(zgc_e):
 # all ions are placed in the beginning of the coordinate system
 #          and have longitudinal velocity shiftV_p
 #
-z_ion[Ipz,:]=M_ion*shiftV_p           # all ions have the same momenta, g*cm/sec
+z_ion[Ipz,:]=M_ion*shiftV_p                                        # all ions have the same momenta, g*cm/sec
 
 #
 # Matrix to dragg particle with mass 'm_part' through the drift during time interval 'deltaT':
@@ -220,26 +220,27 @@ numbVe_long=30
 # i.e. minImpctPar > rhoCrit+rho_larm  
 #
 rhoCrit=math.pow(q_elec**2/(m_elec*omega_L**2),1./3)               # cm
-# print 'rhoCrit, ro_larm (mkm) = ', (1.e4*rhoCrit,1.e4*ro_larm)
-
-minImpctPar=rhoCrit+ro_larm
+print 'rhoCrit, <ro_larm> (mkm) = ', (1.e4*rhoCrit,1.e4*ro_larm)
 
 numb_e = 1000                                                      # number of electrons
 numb_p = 50                                                        # number of protons
 
 eBeamRad = 0.1                                                     # cm
 eBeamDens = 1.e+8                                                  # cm^-3
+
+neutrRadius=math.pow(.75/eBeamDens,1./3.)                    # cm
+print 'Neutalization radius (mkm) = ', 1.e4*neutrRadius
 #
 # It was found that the maximal impact parameter (maxImpctPar) is defined  
 # by the longitudinal temperature eTempLong of electrons and their density
 # eBeamDens in the beam; for "small" velocity V_i of the ions the maxImpctPar
-# is constant =slopDebye, while the opposite case it depend linearly of V_i:
-# =slopDebye*V_i/eVrmsLong. So maxImpctPar will calculate in the place,,
+# is constant = neutrRadius, while the opposite case it depend linearly of V_i:
+# =slopDebye*V_i/eVrmsLong. So, maxImpctPar will calculate in the place,
 # where the velocities of the ion will be defined: 
 #
-# maxImpctPar = slopDebye * V_i / eVrmsLong 
-# if V_i < eVrmsLong:
-#    maxImpctPar = slopDebye 
+# maxImpctPar = radiusDebye = slopDebye * V_i / eVrmsLong 
+# if maxImpctPar < neutrRadius:
+#    maxImpctPar = neutrRadius 
 #
 slopDebye=np.sqrt(eVtoErg*eTempLong/(2*pi*q_elec**2*eBeamDens))            # cm
 print 'slopDebye (mkm): ', 1.e4*slopDebye
@@ -263,7 +264,8 @@ print 'Relative: eVtranStd=',eVtranStd
 
 eVtranMin=np.min(eVtran)                                           # dimensionless
 eVtranMax=np.max(eVtran)                                           # dimensionless
-print 'Relative: eVtranMin, eVtranMax = ', (eVtranMin,eVtranMax)
+print 'Relative (transversal): eVtranMin, eVtranMax = ', (eVtranMin,eVtranMax)
+print 'Absolute (transversal) cm/sec: eVtranMin, eVtranMax = ', (eVrmsTran*eVtranMin,eVrmsTran*eVtranMax)
  
 eVtranStep=(eVtranMax-eVtranMin)/numbVe_tran                       # dimensionless
 
@@ -306,6 +308,11 @@ eVzMean=z_elec[Ipz,:].mean()
 eVzStd=z_elec[Ipz,:].std()
 print 'Relative: eVzMean = %e (must be %e),eVzStd = %e (must be %e)' % (eVzMean,relShiftV_e,eVzStd,1.)
 
+eVlongMin=np.min(abs(z_elec[Ipz,:]-relShiftV_e))                   # dimensionless
+eVlongMax=np.max(abs(z_elec[Ipz,:]-relShiftV_e))                   # dimensionless
+print 'Relative (longitudinal): eVlongMin, eVlongMax = ', (eVlongMin,eVlongMax)
+print 'Absolute (longitudinal), cm/sec: eVlongMin, eVlongMax = ', (eVrmsLong*eVlongMin,eVrmsLong*eVlongMax)
+ 
 plt.figure(20)
 velLong_hist=plt.hist(z_elec[Ipz,:],bins=30)
 plt.xlabel('$V_z / V_{rms_{||}}$',color='m',fontsize=16)
@@ -338,36 +345,77 @@ for k in range(numbVe_long):
 # intrLenSlctd - interaction length, tofSlctd - time of flight,
 # timeStepSlctd - total number of time steps 
 #
+currntRlarm=np.zeros(numbVe_tran)
+minImpctPar=np.zeros(numbVe_tran)
+maxImpctPar=np.zeros(numbVe_tran)
 impParSlctd=np.zeros((numbVe_tran,numbImpPar))
 intrLenSlctd=np.zeros((numbVe_tran,numbImpPar))
 tofSlctd=np.zeros((numbVe_tran,numbImpPar,numbVe_long))
 timeStepSlctd=np.zeros((numbVe_tran,numbImpPar,numbVe_long))
 for i in range(numbVe_tran):
-   maxImpctPar = slopDebye*eVtranSlctd[i]*eVrmsLong/eVrmsLong      # cm 
-   if eVtranSlctd[i]*eVrmsLong < eVrmsLong:
-      maxImpctPar = slopDebye                                      # cm
-   impParStep=(maxImpctPar-minImpctPar)/numbImpPar                 # cm
+   currntRlarm[i] = eVtranSlctd[i]*eVrmsTran/omega_L               # Larmor radius, cm
+   minImpctPar[i]=rhoCrit+currntRlarm[i]                           # cm
+   shieldRad = slopDebye*eVtranSlctd[i]*eVrmsLong/eVrmsLong        # Debye radius, cm 
+   if shieldRad < neutrRadius:
+      shieldRad=neutrRadius                                        # Neutralization radius, cm
+   maxImpctPar[i]=shieldRad+currntRlarm[i]                         # max of impact parameter, cm
+   impParStep=(maxImpctPar[i]-minImpctPar[i])/numbImpPar           # cm
    for j in range(numbImpPar):
-      impParSlctd[i,j]=minImpctPar+impParStep*(j+.5)               # cm
+      impParSlctd[i,j]=minImpctPar[i]+impParStep*(j+.5)            # cm
       intrLenSlctd[i,j]=2.*impParSlctd[i,j]*tangAlpha              # length of interaction, cm
       for k in range(numbVe_long):
          velLongCrnt=eVrmsLong*eVlongSlctd[k]                      # vLong, cm/sec
          tofSlctd[i,j,k]=intrLenSlctd[i,j]/np.abs(velLongCrnt-shiftV_e)   # time of flight for electron, sec
          timeStepSlctd[i,j,k]=int(tofSlctd[i,j,k]/timeStep)        # total number of steps
 
+eVtranSlctdMin=np.min(eVtranSlctd)                                 # dimensionless
+eVtranSlctdMax=np.max(eVtranSlctd)                                 # dimensionless
+print 'Relative (selected transversal): eVtranMin, eVtranMax = ', (eVtranSlctdMin,eVtranSlctdMax)
+print 'Absolute (selected transversal) cm/sec: eVtranMin, eVtranMax = ', \
+      (eVrmsTran*eVtranSlctdMin,eVrmsTran*eVtranSlctdMax)
+
+print 'Larmour radius (mkm)= ', 1.e4*currntRlarm 
+
+for i in range(numbImpPar):
+   print '  (i,   Transvese velocity (cm/sec))= ', (i,eVtranSlctd[i]*eVrmsLong)
+   print 'Impact parameter (mkm): min,max=', (1.e4*minImpctPar[i],1.e4*maxImpctPar[i])
+   print 'Array of mpact parameters (mkm) is:\n', 1.e4*impParSlctd[i,:]
+
+eVlongSlctdMin=np.min(abs(eVlongSlctd-relShiftV_e))                # dimensionless
+eVlongSlctdMax=np.max(abs(eVlongSlctd-relShiftV_e))                # dimensionless
+print 'Relative (selected longitudinal): eVlongMin, eVlongMax = ', (eVlongSlctdMin,eVlongSlctdMax)
+print 'Absolute (selected longitudinal) cm/sec: eVlongMin, eVlongMax = ', \
+      (eVrmsLong*eVlongSlctdMin,eVrmsLong*eVlongSlctdMax)
+ 
+minIntLength=np.min(intrLenSlctd)
+maxIntLength=np.max(intrLenSlctd)
+print 'Interaction length: min,max= ', (1.e4*minIntLength,1.e4*maxIntLength)
+
+indMinLength=np.where(intrLenSlctd==np.min(intrLenSlctd))
+print 'indMinLength= ',indMinLength
+indMaxLength=np.where(intrLenSlctd==np.max(intrLenSlctd))
+print 'indMaxLength= ',indMaxLength
+
+minTimeSteps=np.min(timeStepSlctd)
+maxTimeSteps=np.max(timeStepSlctd)
+print 'Total number of time steps: min,max= ', (minTimeSteps,maxTimeSteps)
+
+indMinSteps=np.where(timeStepSlctd==np.min(timeStepSlctd))
+print 'indMinSteps= ',indMinSteps
+indMaxSteps=np.where(timeStepSlctd==np.max(timeStepSlctd))
+print 'indMaxSteps= ',indMaxSteps
+
 for i in range(numbVe_tran):
-   print '               Transvese velocity (cm/sec) ', eVtranSlctd[i]*eVrmsLong
+   print '  (i,   Transvese velocity (cm/sec))= ', (i,eVtranSlctd[i]*eVrmsLong)
    print 'Length of interaction (mkm): \n', 1.e4*intrLenSlctd[i,:]
-
+   for j in range(numbImpPar):
+      print '  (i,j: Number of time steps for length of interaction (mkm))=  ', (i,j,1.e4*intrLenSlctd[i,j])
+      print 'Numbers are:\n', timeStepSlctd[i,j,:]
 '''	
-#    for j in range(numbImpPar):
-#       print 'Length of interaction (mkm): ', 1.e4*intrLenSlctd[i,j]
-#       print 'Number of Larmor turns during interaction:\n', tofSlctd[i,j,:]/T_larm
-
-for j in range(numbImpPar):
-   print 'Total number of time steps for length interaction (mkm)', 1.e4*intrLenSlctd[j]
-   print 'Numbers are:\n', timeStepSlctd[j,:]
 '''	
+
+# for j in range(numbImpPar):
+#    print '      (j,   Total number of time steps for length interaction (mkm))= ', (j,1.e4*intrLenSlctd[j])
     
 '''	
 #----------------------------------------------

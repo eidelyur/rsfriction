@@ -35,13 +35,17 @@ What was done during 08/02/2017 - 08/03/2017:
          to correctly calculate  the FF for magnetized electrons; I did not place the "gaming" 
          version of the code to repository.
 
-
-
-
 What was done during 08/11/2017:
 
 1) Documents 'kinematicOfMagnetizedElectron.docx' and 
    'mapOfMaximalImpactParameter.docx' are finished. Resukts are included
    in new version of code ffLOA under new name frictionForceIntegration.py (fFI)
+2) Code fFI under developing and debugging.
+
+What was done during 08/16/2017  - 08/17/2017:
+
+1) Development of the understanding of the range for impact parameters in case of the 
+   finite lLarmor radius, if this radius is compatible with critical radius, radius of 
+   the neutralization and/or Debye radius. 
 2) Code fFI under developing and debugging.
  
