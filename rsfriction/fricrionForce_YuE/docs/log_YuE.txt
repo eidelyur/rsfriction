@@ -48,4 +48,9 @@ What was done during 08/16/2017  - 08/17/2017:
    finite lLarmor radius, if this radius is compatible with critical radius, radius of 
    the neutralization and/or Debye radius. 
 2) Code fFI under developing and debugging.
+
+
+What was done during 08/18/2017, 08/21/2017:
+
+1) Code fFI under developing and debugging (first approach is near finishing).
  
