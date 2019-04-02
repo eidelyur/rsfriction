@@ -1,0 +1,55 @@
+What was done during 07/26/2017:
+
+1) Document mcool2code.docx was finished.
+2) frictionForce_LieOperatorsApproach.py code (fFLOA) writing and debugging continued.
+
+What was done during 07/27/2017:
+
+1) The study of the criteria for eletron magnetization for code fFLOA:
+      For each electrons during interaction more than 100 Larmour turns! OK!
+2) Code fFLOA writing and debugging continued:
+      a) Some problems with Python (creating matrix inside function);
+      b) Something wrong with electron trajectory
+
+What was done during 07/28/2017:
+
+1) The study some new issues of Python.
+2) Code fFLOA writing and debugging continued:
+      a) Ok with trajectories;
+      b) Prepering of the next step - friction force calculation.
+
+What was done during 07/31/2017 - 08/01/2017:
+
+1) The study some new issues of Python.
+2) Code fFLOA writing and debugging continued:
+      a) Friction force calculation using integration along the electron Larmour trajectory.
+
+What was done during 08/02/2017 - 08/03/2017:
+
+1) Brlliant overview (Mechkov) was investigated. This is his improved report for COOL2016. 
+   I used the "trick", described by Igor (transition from 1.16 to 1.20) earlier (I wrote about it).
+   Very interesting!
+2) The study some new issues of Python.
+3) Code fFLOA writing and debugging continued:
+      a) "Games" with calculation of the friction force (FF) showed, how code must be changed 
+         to correctly calculate  the FF for magnetized electrons; I did not place the "gaming" 
+         version of the code to repository.
+
+What was done during 08/11/2017:
+
+1) Documents 'kinematicOfMagnetizedElectron.docx' and 
+   'mapOfMaximalImpactParameter.docx' are finished. Resukts are included
+   in new version of code ffLOA under new name frictionForceIntegration.py (fFI)
+2) Code fFI under developing and debugging.
+
+What was done during 08/16/2017  - 08/17/2017:
+
+1) Development of the understanding of the range for impact parameters in case of the 
+   finite lLarmor radius, if this radius is compatible with critical radius, radius of 
+   the neutralization and/or Debye radius. 
+2) Code fFI under developing and debugging.
+
+
+What was done during 08/18/2017, 08/21/2017:
+
+1) Code fFI under developing and debugging (first approach is near finishing).
